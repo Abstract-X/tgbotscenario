@@ -49,10 +49,6 @@ class ScenarioMachine:
 
         return await self._state_machine.get_current_state(chat_id=chat_id, user_id=user_id)
 
-    async def set_current_state(self, state: str, *, chat_id: int, user_id: int) -> None:
-
-        await self._state_machine.set_current_state(state, chat_id=chat_id, user_id=user_id)
-
     def add_transition(self, source_scene: AbstractScene, destination_scene: AbstractScene,
                        handler: Callable, direction: Optional[str] = None) -> None:
 
