@@ -145,11 +145,6 @@ class ScenarioMachine:
                     "(chat_id={chat_id!r}, user_id={user_id!r})!'", chat_id=chat_id, user_id=user_id
                 ) from None
 
-    async def refresh_current_scene(self, *, chat_id: int, user_id: int, scene_args: Tuple[Any, ...]) -> None:
-
-        current_scene = await self.get_current_scene(chat_id=chat_id, user_id=user_id)
-        await current_scene.process_enter(*scene_args)
-
     async def _process_transition(self, magazine: StateMagazine, *,
                                   chat_id: int, user_id: int, scene_args: Tuple[Any, ...],
                                   source_scene: AbstractScene, destination_scene: AbstractScene) -> None:
