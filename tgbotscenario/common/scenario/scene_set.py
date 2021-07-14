@@ -1,6 +1,8 @@
-from typing import Iterator
+from __future__ import annotations
+from typing import Iterator, TYPE_CHECKING
 
-from tgbotscenario.types import BaseSceneUnion
+if TYPE_CHECKING:
+    from tgbotscenario.types import BaseSceneUnion
 
 
 class SceneSet:
