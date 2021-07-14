@@ -80,6 +80,11 @@ class ScenarioMachine:
 
         return self._transition_storage.check(source_scene, destination_scene, handler, direction)
 
+    def remove_transition(self, source_scene: BaseScene, handler: Callable,
+                          direction: Optional[str] = None) -> BaseScene:
+
+        return self._transition_storage.remove(source_scene, handler, direction)
+
     async def migrate_to_scene(self, scene: BaseScene, *, chat_id: int,
                                user_id: int, scene_args: Tuple[Any, Any]) -> None:
 
