@@ -1,15 +1,15 @@
 from typing import Iterator
 
-from tgbotscenario.types import AbstractSceneUnion
+from tgbotscenario.types import BaseSceneUnion
 
 
 class SceneSet:
 
-    def __init__(self, *scenes: AbstractSceneUnion):
+    def __init__(self, *scenes: BaseSceneUnion):
 
         self._set = frozenset(scenes)
 
-    def __iter__(self) -> Iterator[AbstractSceneUnion]:
+    def __iter__(self) -> Iterator[BaseSceneUnion]:
 
         return iter(self._set)
 

@@ -1,6 +1,6 @@
 from typing import Optional, Callable
 
-from tgbotscenario.types import StoredTransitionDict, AbstractSceneUnion
+from tgbotscenario.types import StoredTransitionDict, BaseSceneUnion
 from tgbotscenario import errors
 import tgbotscenario.errors.transition_storage
 
@@ -11,7 +11,7 @@ class TransitionStorage:
 
         self._storage: StoredTransitionDict = {}
 
-    def add(self, source_scene: AbstractSceneUnion, destination_scene: AbstractSceneUnion,
+    def add(self, source_scene: BaseSceneUnion, destination_scene: BaseSceneUnion,
             handler: Callable, direction: Optional[str] = None) -> None:
 
         existing_destination_scene = self._fetch_destination_scene(source_scene, handler, direction)
@@ -37,13 +37,13 @@ class TransitionStorage:
 
         self._storage[source_scene][handler][direction] = destination_scene
 
-    def check(self, source_scene: AbstractSceneUnion, destination_scene: AbstractSceneUnion,
+    def check(self, source_scene: BaseSceneUnion, destination_scene: BaseSceneUnion,
               handler: Callable, direction: Optional[str] = None) -> bool:
 
         return self._fetch_destination_scene(source_scene, handler, direction) is destination_scene
 
-    def remove(self, source_scene: AbstractSceneUnion, handler: Callable,
-               direction: Optional[str] = None) -> AbstractSceneUnion:
+    def remove(self, source_scene: BaseSceneUnion, handler: Callable,
+               direction: Optional[str] = None) -> BaseSceneUnion:
 
         try:
             destination_scene = self._storage[source_scene][handler].pop(direction)
@@ -60,8 +60,8 @@ class TransitionStorage:
 
         return destination_scene
 
-    def get_destination_scene(self, source_scene: AbstractSceneUnion,
-                              handler: Callable, direction: Optional[str] = None) -> AbstractSceneUnion:
+    def get_destination_scene(self, source_scene: BaseSceneUnion,
+                              handler: Callable, direction: Optional[str] = None) -> BaseSceneUnion:
 
         try:
             return self._storage[source_scene][handler][direction]
@@ -71,8 +71,8 @@ class TransitionStorage:
                 "direction={direction!r})!", source_scene=source_scene, handler=handler, direction=direction
             ) from None
 
-    def _fetch_destination_scene(self, source_scene: AbstractSceneUnion, handler: Callable,
-                                 direction: Optional[str] = None) -> Optional[AbstractSceneUnion]:
+    def _fetch_destination_scene(self, source_scene: BaseSceneUnion, handler: Callable,
+                                 direction: Optional[str] = None) -> Optional[BaseSceneUnion]:
 
         try:
             return self._storage[source_scene][handler][direction]

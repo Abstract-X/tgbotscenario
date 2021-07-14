@@ -1,6 +1,6 @@
 from typing import Optional, Callable, Set, Tuple, Any
 
-from tgbotscenario.asynchronous.scenario.scene import AbstractScene
+from tgbotscenario.asynchronous.scenario.scene import BaseScene
 from tgbotscenario.asynchronous.scenario.locks.base import AbstractLockStorage
 from tgbotscenario.asynchronous.scenario.locks.memory import MemoryLockStorage
 from tgbotscenario.asynchronous.states.machine import StateMachine
@@ -18,7 +18,7 @@ import tgbotscenario.errors.transition_storage
 
 class ScenarioMachine:
 
-    def __init__(self, initial_scene: AbstractScene, state_storage: AbstractStateStorage, *,
+    def __init__(self, initial_scene: BaseScene, state_storage: AbstractStateStorage, *,
                  lock_storage: Optional[AbstractLockStorage] = None, suppress_lock_error: bool = False):
 
         self._initial_scene = initial_scene
@@ -29,16 +29,16 @@ class ScenarioMachine:
         self._suppress_lock_error = suppress_lock_error
 
     @property
-    def initial_scene(self) -> Optional[AbstractScene]:
+    def initial_scene(self) -> Optional[BaseScene]:
 
         return self._initial_scene
 
     @property
-    def scenes(self) -> Set[AbstractScene]:
+    def scenes(self) -> Set[BaseScene]:
 
         return self._scene_mapping.scenes
 
-    async def get_current_scene(self, *, chat_id: int, user_id: int) -> AbstractScene:
+    async def get_current_scene(self, *, chat_id: int, user_id: int) -> BaseScene:
 
         current_state = await self._state_machine.get_current_state(chat_id=chat_id, user_id=user_id)
         scene = self._scene_mapping.get(current_state)
@@ -49,7 +49,7 @@ class ScenarioMachine:
 
         return await self._state_machine.get_current_state(chat_id=chat_id, user_id=user_id)
 
-    def add_transition(self, source_scene: AbstractScene, destination_scene: AbstractScene,
+    def add_transition(self, source_scene: BaseScene, destination_scene: BaseScene,
                        handler: Callable, direction: Optional[str] = None) -> None:
 
         self._transition_storage.add(source_scene, destination_scene, handler, direction)
@@ -60,12 +60,12 @@ class ScenarioMachine:
 
         for source_scenes_key in transitions:
             source_scenes = (
-                SceneSet(source_scenes_key) if isinstance(source_scenes_key, AbstractScene) else source_scenes_key
+                SceneSet(source_scenes_key) if isinstance(source_scenes_key, BaseScene) else source_scenes_key
             )
             for source_scene in source_scenes:
                 for handler in transitions[source_scenes_key]:
                     item = transitions[source_scenes_key][handler]
-                    if isinstance(item, AbstractScene):
+                    if isinstance(item, BaseScene):
                         items = ((None, item),)  # None-direction and destination scene
                     elif isinstance(item, dict):
                         items = item.items()  # directions and destination scenes
@@ -75,13 +75,13 @@ class ScenarioMachine:
                     for direction, destination_scene in items:
                         self.add_transition(source_scene, destination_scene, handler, direction)
 
-    def check_transition(self, source_scene: AbstractScene, destination_scene: AbstractScene,
+    def check_transition(self, source_scene: BaseScene, destination_scene: BaseScene,
                          handler: Callable, direction: Optional[str] = None) -> bool:
 
         return self._transition_storage.check(source_scene, destination_scene, handler, direction)
 
-    async def migrate_to_scene(self, scene: AbstractScene, *, chat_id: int,
-                               user_id: int, scene_args: Tuple[Any, ...]) -> None:
+    async def migrate_to_scene(self, scene: BaseScene, *, chat_id: int,
+                               user_id: int, scene_args: Tuple[Any, Any]) -> None:
 
         try:
             async with self._lock_storage.acquire(chat_id=chat_id, user_id=user_id):
@@ -95,7 +95,7 @@ class ScenarioMachine:
                 chat_id=chat_id, user_id=user_id, scene=scene
             ) from None
 
-    async def execute_next_transition(self, *, chat_id: int, user_id: int, scene_args: Tuple[Any, ...],
+    async def execute_next_transition(self, *, chat_id: int, user_id: int, scene_args: Tuple[Any, Any],
                                       handler: Callable, direction: Optional[str] = None) -> None:
 
         try:
@@ -122,7 +122,7 @@ class ScenarioMachine:
                     "(chat_id={chat_id!r}, user_id={user_id!r})!'", chat_id=chat_id, user_id=user_id
                 ) from None
 
-    async def execute_back_transition(self, *, chat_id: int, user_id: int, scene_args: Tuple[Any, ...]) -> None:
+    async def execute_back_transition(self, *, chat_id: int, user_id: int, scene_args: Tuple[Any, Any]) -> None:
 
         try:
             async with self._lock_storage.acquire(chat_id=chat_id, user_id=user_id):
@@ -146,8 +146,8 @@ class ScenarioMachine:
                 ) from None
 
     async def _process_transition(self, magazine: StateMagazine, *,
-                                  chat_id: int, user_id: int, scene_args: Tuple[Any, ...],
-                                  source_scene: AbstractScene, destination_scene: AbstractScene) -> None:
+                                  chat_id: int, user_id: int, scene_args: Tuple[Any, Any],
+                                  source_scene: BaseScene, destination_scene: BaseScene) -> None:
 
         await source_scene.process_exit(*scene_args)
         await destination_scene.process_enter(*scene_args)

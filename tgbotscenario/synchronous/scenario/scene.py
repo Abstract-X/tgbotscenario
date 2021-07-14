@@ -1,16 +1,12 @@
-from abc import ABCMeta, abstractmethod
-
-from tgbotscenario.common.scenario.scene import BaseScene
+from tgbotscenario.common.scenario import scene
 
 
-class AbstractScene(BaseScene, metaclass=ABCMeta):
+class BaseScene(scene.BaseScene):
 
-    @abstractmethod
-    def process_enter(self, *args) -> None:
+    def process_enter(self, event, data) -> None:
 
         pass
 
-    @abstractmethod
-    def process_exit(self, *args) -> None:
+    def process_exit(self, event, data) -> None:
 
         pass

@@ -1,24 +1,24 @@
 from typing import Dict, Set, Iterable
 
-from tgbotscenario.types import AbstractSceneUnion
+from tgbotscenario.types import BaseSceneUnion
 from tgbotscenario import errors
 import tgbotscenario.errors.scene_mapping
 
 
 class SceneMapping:
 
-    def __init__(self, scenes: Iterable[AbstractSceneUnion] = ()):
+    def __init__(self, scenes: Iterable[BaseSceneUnion] = ()):
 
-        self._mapping: Dict[str, AbstractSceneUnion] = {}
+        self._mapping: Dict[str, BaseSceneUnion] = {}
         for scene in scenes:
             self.add(scene)
 
     @property
-    def scenes(self) -> Set[AbstractSceneUnion]:
+    def scenes(self) -> Set[BaseSceneUnion]:
 
         return set(self._mapping.values())
 
-    def add(self, scene: AbstractSceneUnion) -> None:
+    def add(self, scene: BaseSceneUnion) -> None:
 
         if scene.name in self._mapping:
             existing_scene = self.get(scene.name)
@@ -30,7 +30,7 @@ class SceneMapping:
         else:
             self._mapping[scene.name] = scene
 
-    def get(self, name: str) -> AbstractSceneUnion:
+    def get(self, name: str) -> BaseSceneUnion:
 
         try:
             return self._mapping[name]
