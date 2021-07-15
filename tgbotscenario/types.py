@@ -7,6 +7,5 @@ from tgbotscenario.synchronous.scenario.scene import BaseScene as SyncBaseScene
 
 BaseSceneUnion = Union[AsyncBaseScene, SyncBaseScene]
 
-TransitionDict = (Dict[Union[BaseSceneUnion, SceneSet],
-                       Dict[Callable, Union[BaseSceneUnion, Dict[str, BaseSceneUnion]]]])
+TransitionDict = Dict[Union[BaseSceneUnion, SceneSet], Dict[Callable, Union[BaseSceneUnion, Dict[str, BaseSceneUnion]]]]
 StoredTransitionDict = Dict[BaseSceneUnion, Dict[Callable, Dict[Optional[str], BaseSceneUnion]]]
