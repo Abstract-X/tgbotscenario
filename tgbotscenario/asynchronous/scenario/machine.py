@@ -14,6 +14,7 @@ from tgbotscenario import errors
 import tgbotscenario.errors.scenario_machine
 import tgbotscenario.errors.lock_storage
 import tgbotscenario.errors.transition_storage
+import tgbotscenario.errors.scene_mapping
 
 
 class ScenarioMachine:
@@ -41,7 +42,13 @@ class ScenarioMachine:
     async def get_current_scene(self, *, chat_id: int, user_id: int) -> BaseScene:
 
         current_state = await self._state_machine.get_current_state(chat_id=chat_id, user_id=user_id)
-        scene = self._scene_mapping.get(current_state)
+        try:
+            scene = self._scene_mapping.get(current_state)
+        except errors.scene_mapping.SceneNameNotFound:
+            raise errors.scenario_machine.CurrentSceneNotFoundError(
+                "current scene not found (state={state!r}), because it is not involved in transitions!",
+                chat_id=chat_id, user_id=user_id, state=current_state
+            ) from None
 
         return scene
 

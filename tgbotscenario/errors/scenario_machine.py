@@ -48,3 +48,11 @@ class TransitionLockedError(ScenarioMachineError):
 
     chat_id: int
     user_id: int
+
+
+@dataclass
+class CurrentSceneNotFoundError(ScenarioMachineError):
+
+    chat_id: int
+    user_id: int
+    state: str
