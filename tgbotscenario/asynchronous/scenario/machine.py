@@ -44,7 +44,7 @@ class ScenarioMachine:
         current_state = await self._state_machine.get_current_state(chat_id=chat_id, user_id=user_id)
         try:
             scene = self._scene_mapping.get(current_state)
-        except errors.scene_mapping.SceneNameNotFound:
+        except errors.scene_mapping.SceneNameNotFoundError:
             raise errors.scenario_machine.CurrentSceneNotFoundError(
                 "current scene not found (state={state!r}), because it is not involved in transitions!",
                 chat_id=chat_id, user_id=user_id, state=current_state

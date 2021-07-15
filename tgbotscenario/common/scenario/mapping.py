@@ -35,11 +35,11 @@ class SceneMapping:
         try:
             del self._mapping[name]
         except KeyError:
-            raise errors.scene_mapping.SceneNameNotFound("name {name!r} not found!", name=name) from None
+            raise errors.scene_mapping.SceneNameNotFoundError("name {name!r} not found!", name=name) from None
 
     def get(self, name: str) -> BaseSceneUnion:
 
         try:
             return self._mapping[name]
         except KeyError:
-            raise errors.scene_mapping.SceneNameNotFound("name {name!r} not found!", name=name) from None
+            raise errors.scene_mapping.SceneNameNotFoundError("name {name!r} not found!", name=name) from None

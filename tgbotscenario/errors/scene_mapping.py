@@ -18,6 +18,6 @@ class SceneNameBusyError(SceneMappingError):
 
 
 @dataclass
-class SceneNameNotFound(SceneMappingError):
+class SceneNameNotFoundError(SceneMappingError):
 
     name: str
