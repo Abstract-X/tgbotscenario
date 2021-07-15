@@ -1,4 +1,4 @@
-from typing import Optional, Callable
+from typing import Optional, Callable, Set
 
 from tgbotscenario.types import StoredTransitionDict, BaseSceneUnion
 from tgbotscenario import errors
@@ -10,6 +10,18 @@ class TransitionStorage:
     def __init__(self):
 
         self._storage: StoredTransitionDict = {}
+
+    @property
+    def scenes(self) -> Set[BaseSceneUnion]:
+
+        scenes_ = set()
+        for source_scene in self._storage:
+            scenes_.add(source_scene)
+            for handler in self._storage[source_scene]:
+                for _, destination_scene in self._storage[source_scene][handler].items():
+                    scenes_.add(destination_scene)
+
+        return scenes_
 
     def add(self, source_scene: BaseSceneUnion, destination_scene: BaseSceneUnion,
             handler: Callable, direction: Optional[str] = None) -> None:
