@@ -63,7 +63,7 @@ class TestScenarioMachineContextMoveToNextScene:
         assert current_state == "FooScene"
 
     @pytest.mark.asyncio
-    async def test_non_existent_transition(self, context_data, scene_data_stub):
+    async def test_transition_not_exists(self, context_data, scene_data_stub):
 
         class InitialScene(BaseScene):
             pass
@@ -183,7 +183,7 @@ class TestScenarioMachineContextMoveToPreviousScene:
         assert current_state == "InitialScene"
 
     @pytest.mark.asyncio
-    async def test_non_existent_previous_state(self, scene_data_stub, context_data):
+    async def test_previous_state_not_exists(self, scene_data_stub, context_data):
 
         class InitialScene(BaseScene):
             pass

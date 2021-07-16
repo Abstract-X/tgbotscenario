@@ -86,7 +86,7 @@ class TestScenarioMachineGetCurrentScene:
         assert current_scene is foo_scene
 
     @pytest.mark.asyncio
-    async def test_non_existent_scene(self, chat_id, user_id, telegram_event_stub, scene_data_stub):
+    async def test_scene_not_exists(self, chat_id, user_id, telegram_event_stub, scene_data_stub):
 
         class InitialScene(BaseScene):
             pass
@@ -403,7 +403,7 @@ class TestScenarioMachineExecuteNextTransition:
         assert current_state == "FooScene"
 
     @pytest.mark.asyncio
-    async def test_non_existent_transition(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler_stub):
+    async def test_transition_not_exists(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler_stub):
 
         class InitialScene(BaseScene):
             pass
@@ -521,8 +521,8 @@ class TestScenarioMachineExecuteBackTransition:
         assert current_state == "InitialScene"
 
     @pytest.mark.asyncio
-    async def test_non_existent_previous_state(self, chat_id, user_id, telegram_event_stub,
-                                               scene_data_stub, handler_stub):
+    async def test_previous_state_not_exists(self, chat_id, user_id, telegram_event_stub,
+                                             scene_data_stub, handler_stub):
 
         class InitialScene(BaseScene):
             pass
