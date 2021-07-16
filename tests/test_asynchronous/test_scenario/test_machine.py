@@ -36,7 +36,7 @@ class TestScenarioMachineScenes:
 
         assert machine.scenes == {initial_scene}
 
-    def test_with_transition(self, handler_stub):
+    def test_with_transition(self, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -47,7 +47,7 @@ class TestScenarioMachineScenes:
         initial_scene = InitialScene()
         foo_scene = FooScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(initial_scene, foo_scene, handler_stub)
+        machine.add_transition(initial_scene, foo_scene, handler)
 
         assert machine.scenes == {initial_scene, foo_scene}
 
@@ -67,7 +67,7 @@ class TestScenarioMachineGetCurrentScene:
         assert current_scene is initial_scene
 
     @pytest.mark.asyncio
-    async def test_after_transition(self, chat_id, user_id, handler_stub, telegram_event_stub, scene_data_stub):
+    async def test_after_transition(self, chat_id, user_id, handler, telegram_event_stub, scene_data_stub):
 
         class InitialScene(BaseScene):
             pass
@@ -78,9 +78,9 @@ class TestScenarioMachineGetCurrentScene:
         initial_scene = InitialScene()
         foo_scene = FooScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(initial_scene, foo_scene, handler_stub)
+        machine.add_transition(initial_scene, foo_scene, handler)
         await machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
-                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler_stub)
+                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         current_scene = await machine.get_current_scene(chat_id=chat_id, user_id=user_id)
 
         assert current_scene is foo_scene
@@ -119,7 +119,7 @@ class TestScenarioMachineGetCurrentState:
         assert current_state == "InitialScene"
 
     @pytest.mark.asyncio
-    async def test_after_transition(self, chat_id, user_id, handler_stub, telegram_event_stub, scene_data_stub):
+    async def test_after_transition(self, chat_id, user_id, handler, telegram_event_stub, scene_data_stub):
 
         class InitialScene(BaseScene):
             pass
@@ -130,9 +130,9 @@ class TestScenarioMachineGetCurrentState:
         initial_scene = InitialScene()
         foo_scene = FooScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(initial_scene, foo_scene, handler_stub)
+        machine.add_transition(initial_scene, foo_scene, handler)
         await machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
-                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler_stub)
+                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         current_state = await machine.get_current_state(chat_id=chat_id, user_id=user_id)
 
         assert current_state == "FooScene"
@@ -140,7 +140,7 @@ class TestScenarioMachineGetCurrentState:
 
 class TestScenarioMachineAddTransition:
 
-    def test_without_direction(self, handler_stub):
+    def test_without_direction(self, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -151,13 +151,13 @@ class TestScenarioMachineAddTransition:
         initial_scene = InitialScene()
         foo_scene = FooScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(initial_scene, foo_scene, handler_stub)
+        machine.add_transition(initial_scene, foo_scene, handler)
 
-        assert machine.check_transition(initial_scene, foo_scene, handler_stub)
+        assert machine.check_transition(initial_scene, foo_scene, handler)
         assert initial_scene in machine.scenes
         assert foo_scene in machine.scenes
 
-    def test_with_direction(self, handler_stub):
+    def test_with_direction(self, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -168,9 +168,9 @@ class TestScenarioMachineAddTransition:
         initial_scene = InitialScene()
         foo_scene = FooScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(initial_scene, foo_scene, handler_stub, "some_direction")
+        machine.add_transition(initial_scene, foo_scene, handler, "some_direction")
 
-        assert machine.check_transition(initial_scene, foo_scene, handler_stub, "some_direction")
+        assert machine.check_transition(initial_scene, foo_scene, handler, "some_direction")
         assert initial_scene in machine.scenes
         assert foo_scene in machine.scenes
 
@@ -222,7 +222,7 @@ class TestScenarioMachineAddTransitions:
 
 class TestScenarioMachineCheckTransition:
 
-    def test_without_direction(self, handler_stub):
+    def test_without_direction(self, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -233,15 +233,15 @@ class TestScenarioMachineCheckTransition:
         initial_scene = InitialScene()
         foo_scene = FooScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(initial_scene, foo_scene, handler_stub)
+        machine.add_transition(initial_scene, foo_scene, handler)
 
-        assert machine.check_transition(initial_scene, foo_scene, handler_stub) is True
+        assert machine.check_transition(initial_scene, foo_scene, handler) is True
 
-        machine.remove_transition(initial_scene, handler_stub)
+        machine.remove_transition(initial_scene, handler)
 
-        assert machine.check_transition(initial_scene, foo_scene, handler_stub) is False
+        assert machine.check_transition(initial_scene, foo_scene, handler) is False
 
-    def test_with_direction(self, handler_stub):
+    def test_with_direction(self, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -252,18 +252,18 @@ class TestScenarioMachineCheckTransition:
         initial_scene = InitialScene()
         foo_scene = FooScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(initial_scene, foo_scene, handler_stub, "some_direction")
+        machine.add_transition(initial_scene, foo_scene, handler, "some_direction")
 
-        assert machine.check_transition(initial_scene, foo_scene, handler_stub, "some_direction") is True
+        assert machine.check_transition(initial_scene, foo_scene, handler, "some_direction") is True
 
-        machine.remove_transition(initial_scene, handler_stub, "some_direction")
+        machine.remove_transition(initial_scene, handler, "some_direction")
 
-        assert machine.check_transition(initial_scene, foo_scene, handler_stub) is False
+        assert machine.check_transition(initial_scene, foo_scene, handler) is False
 
 
 class TestScenarioMachineRemoveTransition:
 
-    def test_without_direction(self, handler_stub):
+    def test_without_direction(self, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -274,15 +274,15 @@ class TestScenarioMachineRemoveTransition:
         initial_scene = InitialScene()
         foo_scene = FooScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(initial_scene, foo_scene, handler_stub)
-        destination_scene = machine.remove_transition(initial_scene, handler_stub)
+        machine.add_transition(initial_scene, foo_scene, handler)
+        destination_scene = machine.remove_transition(initial_scene, handler)
 
-        assert not machine.check_transition(initial_scene, foo_scene, handler_stub)
+        assert not machine.check_transition(initial_scene, foo_scene, handler)
         assert destination_scene is foo_scene
         assert initial_scene in machine.scenes
         assert foo_scene not in machine.scenes
 
-    def test_with_direction(self, handler_stub):
+    def test_with_direction(self, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -293,10 +293,10 @@ class TestScenarioMachineRemoveTransition:
         initial_scene = InitialScene()
         foo_scene = FooScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(initial_scene, foo_scene, handler_stub, "some_direction")
-        destination_scene = machine.remove_transition(initial_scene, handler_stub, "some_direction")
+        machine.add_transition(initial_scene, foo_scene, handler, "some_direction")
+        destination_scene = machine.remove_transition(initial_scene, handler, "some_direction")
 
-        assert not machine.check_transition(initial_scene, foo_scene, handler_stub, "some_direction")
+        assert not machine.check_transition(initial_scene, foo_scene, handler, "some_direction")
         assert destination_scene is foo_scene
         assert initial_scene in machine.scenes
         assert foo_scene not in machine.scenes
@@ -305,7 +305,7 @@ class TestScenarioMachineRemoveTransition:
 class TestScenarioMachineMigrateToScene:
 
     @pytest.mark.asyncio
-    async def test(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler_stub):
+    async def test(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -321,7 +321,7 @@ class TestScenarioMachineMigrateToScene:
         foo_scene_mock.name = "FooScene"
         bar_scene = BarScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        machine.add_transition(foo_scene_mock, bar_scene, handler_stub)
+        machine.add_transition(foo_scene_mock, bar_scene, handler)
         await machine.migrate_to_scene(foo_scene_mock, chat_id=chat_id, user_id=user_id,
                                        scene_args=(telegram_event_stub, scene_data_stub))
         current_scene = await machine.get_current_scene(chat_id=chat_id, user_id=user_id)
@@ -332,7 +332,7 @@ class TestScenarioMachineMigrateToScene:
         assert current_state == "FooScene"
 
     @pytest.mark.asyncio
-    async def test_concurrent_transitions(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler_stub):
+    async def test_concurrent_transitions(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -356,9 +356,9 @@ class TestScenarioMachineMigrateToScene:
         bar_scene_mock.process_enter.side_effect = fake_process
 
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
-        machine.add_transition(initial_scene_mock, foo_scene_mock, handler_stub)
+        machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
         first_task = asyncio.create_task(machine.execute_next_transition(
-            chat_id=chat_id, user_id=user_id, scene_args=(telegram_event_stub, scene_data_stub), handler=handler_stub)
+            chat_id=chat_id, user_id=user_id, scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         )
         await asyncio.sleep(0)  # to start the first task before the second
 
@@ -379,7 +379,7 @@ class TestScenarioMachineMigrateToScene:
 class TestScenarioMachineExecuteNextTransition:
 
     @pytest.mark.asyncio
-    async def test(self, chat_id, user_id, telegram_event_stub, handler_stub, scene_data_stub):
+    async def test(self, chat_id, user_id, telegram_event_stub, handler, scene_data_stub):
 
         class InitialScene(BaseScene):
             pass
@@ -391,9 +391,9 @@ class TestScenarioMachineExecuteNextTransition:
         foo_scene_mock = AsyncMock(FooScene)
         foo_scene_mock.name = "FooScene"
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
-        machine.add_transition(initial_scene_mock, foo_scene_mock, handler_stub)
+        machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
         await machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
-                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler_stub)
+                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         current_scene = await machine.get_current_scene(chat_id=chat_id, user_id=user_id)
         current_state = await machine.get_current_state(chat_id=chat_id, user_id=user_id)
 
@@ -403,7 +403,7 @@ class TestScenarioMachineExecuteNextTransition:
         assert current_state == "FooScene"
 
     @pytest.mark.asyncio
-    async def test_transition_not_exists(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler_stub):
+    async def test_transition_not_exists(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -414,10 +414,10 @@ class TestScenarioMachineExecuteNextTransition:
         with pytest.raises(errors.scenario_machine.NextTransitionNotFoundError):
             await machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
                                                   scene_args=(telegram_event_stub, scene_data_stub),
-                                                  handler=handler_stub)
+                                                  handler=handler)
 
     @pytest.mark.asyncio
-    async def test_concurrent_transitions(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler_stub):
+    async def test_concurrent_transitions(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -436,16 +436,16 @@ class TestScenarioMachineExecuteNextTransition:
         foo_scene_mock.process_enter.side_effect = fake_process
 
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
-        machine.add_transition(initial_scene_mock, foo_scene_mock, handler_stub)
+        machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
         first_task = asyncio.create_task(machine.execute_next_transition(
-            chat_id=chat_id, user_id=user_id, scene_args=(telegram_event_stub, scene_data_stub), handler=handler_stub)
+            chat_id=chat_id, user_id=user_id, scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         )
         await asyncio.sleep(0)  # to start the first task before the second
 
         with pytest.raises(errors.scenario_machine.TransitionLockedError):
             await machine.execute_next_transition(
                 chat_id=chat_id, user_id=user_id, scene_args=(telegram_event_stub, scene_data_stub),
-                handler=handler_stub
+                handler=handler
             )
 
         await first_task
@@ -458,7 +458,7 @@ class TestScenarioMachineExecuteNextTransition:
         assert current_state == "FooScene"
 
     @pytest.mark.asyncio
-    async def test_suppress_lock_error(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler_stub):
+    async def test_suppress_lock_error(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -476,10 +476,10 @@ class TestScenarioMachineExecuteNextTransition:
         foo_scene_mock.name = "FooScene"
         foo_scene_mock.process_enter.side_effect = fake_process
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage(), suppress_lock_error=True)
-        machine.add_transition(initial_scene_mock, foo_scene_mock, handler_stub)
+        machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
         await asyncio.gather(
             *[machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
-                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler_stub)
+                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
               for _ in range(2)]
         )
         current_scene = await machine.get_current_scene(chat_id=chat_id, user_id=user_id)
@@ -494,7 +494,7 @@ class TestScenarioMachineExecuteNextTransition:
 class TestScenarioMachineExecuteBackTransition:
 
     @pytest.mark.asyncio
-    async def test(self, chat_id, user_id, telegram_event_stub, handler_stub, scene_data_stub):
+    async def test(self, chat_id, user_id, telegram_event_stub, handler, scene_data_stub):
 
         class InitialScene(BaseScene):
             pass
@@ -506,9 +506,9 @@ class TestScenarioMachineExecuteBackTransition:
         initial_scene_mock.name = "InitialScene"
         foo_scene_mock = AsyncMock(FooScene)
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
-        machine.add_transition(initial_scene_mock, foo_scene_mock, handler_stub)
+        machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
         await machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
-                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler_stub)
+                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         await machine.execute_back_transition(chat_id=chat_id, user_id=user_id,
                                               scene_args=(telegram_event_stub, scene_data_stub))
 
@@ -522,7 +522,7 @@ class TestScenarioMachineExecuteBackTransition:
 
     @pytest.mark.asyncio
     async def test_previous_state_not_exists(self, chat_id, user_id, telegram_event_stub,
-                                             scene_data_stub, handler_stub):
+                                             scene_data_stub):
 
         class InitialScene(BaseScene):
             pass
@@ -535,7 +535,7 @@ class TestScenarioMachineExecuteBackTransition:
                                                   scene_args=(telegram_event_stub, scene_data_stub))
 
     @pytest.mark.asyncio
-    async def test_concurrent_transitions(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler_stub):
+    async def test_concurrent_transitions(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -554,9 +554,9 @@ class TestScenarioMachineExecuteBackTransition:
         foo_scene_mock.process_exit.side_effect = fake_process
 
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
-        machine.add_transition(initial_scene_mock, foo_scene_mock, handler_stub)
+        machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
         await machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
-                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler_stub)
+                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         first_task = asyncio.create_task(machine.execute_back_transition(
             chat_id=chat_id, user_id=user_id, scene_args=(telegram_event_stub, scene_data_stub))
         )
@@ -575,7 +575,7 @@ class TestScenarioMachineExecuteBackTransition:
         assert current_state == "InitialScene"
 
     @pytest.mark.asyncio
-    async def test_suppress_lock_error(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler_stub):
+    async def test_suppress_lock_error(self, chat_id, user_id, telegram_event_stub, scene_data_stub, handler):
 
         class InitialScene(BaseScene):
             pass
@@ -594,9 +594,9 @@ class TestScenarioMachineExecuteBackTransition:
         foo_scene_mock.process_exit.side_effect = fake_process
         foo_scene_mock.process_enter.side_effect = fake_process
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage(), suppress_lock_error=True)
-        machine.add_transition(initial_scene_mock, foo_scene_mock, handler_stub)
+        machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
         await machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
-                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler_stub)
+                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         await asyncio.gather(
             *[machine.execute_back_transition(chat_id=chat_id, user_id=user_id,
                                               scene_args=(telegram_event_stub, scene_data_stub))

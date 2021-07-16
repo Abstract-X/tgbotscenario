@@ -26,9 +26,9 @@ def scene_data_stub():
 
 
 @pytest.fixture()
-def handler_stub():
+def handler():
 
-    async def handler():
+    async def handler_():
         pass
 
-    return handler
+    return handler_
