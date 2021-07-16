@@ -5,3 +5,4 @@ eggs/
 sdist/
 venv/
 .idea/
+*.egg-info/
