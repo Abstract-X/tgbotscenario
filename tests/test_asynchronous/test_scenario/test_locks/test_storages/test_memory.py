@@ -1,6 +1,6 @@
 import pytest
 
-from tgbotscenario.asynchronous.scenario.locks.memory import MemoryLockStorage
+from tgbotscenario.asynchronous.scenario.locks.storages.memory import MemoryLockStorage
 
 
 class TestMemoryLockStorageSet:

@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from tgbotscenario.asynchronous.scenario.locks.base import LockContext
+from tgbotscenario.asynchronous.scenario.locks.context import LockContext
 
 
 class TestLockContextAenter:

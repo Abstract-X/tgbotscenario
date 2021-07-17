@@ -1,4 +1,4 @@
-from tgbotscenario.asynchronous.scenario.locks.base import AbstractLockStorage
+from tgbotscenario.asynchronous.scenario.locks.storages.base import AbstractLockStorage
 
 
 class MemoryLockStorage(AbstractLockStorage):

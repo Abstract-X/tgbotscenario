@@ -1,27 +1,8 @@
-from __future__ import annotations
 from abc import ABC, abstractmethod
 
+from tgbotscenario.asynchronous.scenario.locks.context import LockContext
 from tgbotscenario import errors
 import tgbotscenario.errors.lock_storage
-
-
-class LockContext:
-
-    __slots__ = ("_storage", "chat_id", "user_id")
-
-    def __init__(self, storage: AbstractLockStorage, *, chat_id: int, user_id: int):
-
-        self._storage = storage
-        self.chat_id = chat_id
-        self.user_id = user_id
-
-    async def __aenter__(self):
-
-        await self._storage.add(chat_id=self.chat_id, user_id=self.user_id)
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-
-        await self._storage.remove(chat_id=self.chat_id, user_id=self.user_id)
 
 
 class AbstractLockStorage(ABC):

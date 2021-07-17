@@ -1,8 +1,8 @@
 from typing import Optional, Callable, Set, Tuple, Any
 
 from tgbotscenario.asynchronous.scenario.scene import BaseScene
-from tgbotscenario.asynchronous.scenario.locks.base import AbstractLockStorage
-from tgbotscenario.asynchronous.scenario.locks.memory import MemoryLockStorage
+from tgbotscenario.asynchronous.scenario.locks.storages.base import AbstractLockStorage
+from tgbotscenario.asynchronous.scenario.locks.storages.memory import MemoryLockStorage
 from tgbotscenario.asynchronous.states.machine import StateMachine
 from tgbotscenario.asynchronous.states.storages.base import AbstractStateStorage
 from tgbotscenario.common.scenario.mapping import SceneMapping
