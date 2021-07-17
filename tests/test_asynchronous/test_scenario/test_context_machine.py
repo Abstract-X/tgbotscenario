@@ -12,10 +12,10 @@ from tgbotscenario import errors
 import tgbotscenario.errors.scenario_machine
 
 
-chat_id_context = ContextVar("chat_id")
-user_id_context = ContextVar("user_id")
-handler_context = ContextVar("handler")
-event_context = ContextVar("event")
+chat_id_context = ContextVar("chat_id_context")
+user_id_context = ContextVar("user_id_context")
+handler_context = ContextVar("handler_context")
+event_context = ContextVar("event_context")
 
 
 @pytest.fixture()
