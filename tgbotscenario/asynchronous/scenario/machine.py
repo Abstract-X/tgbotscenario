@@ -135,7 +135,7 @@ class ScenarioMachine:
             if not self._suppress_lock_error:
                 raise errors.scenario_machine.TransitionLockedError(
                     "failed to execute next transition because there is an active lock "
-                    "(chat_id={chat_id!r}, user_id={user_id!r})!'", chat_id=chat_id, user_id=user_id
+                    "(chat_id={chat_id!r}, user_id={user_id!r})!", chat_id=chat_id, user_id=user_id
                 ) from None
 
     async def execute_back_transition(self, *, chat_id: int, user_id: int, scene_args: Tuple[Any, Any]) -> None:
@@ -158,7 +158,7 @@ class ScenarioMachine:
             if not self._suppress_lock_error:
                 raise errors.scenario_machine.TransitionLockedError(
                     "failed to execute back transition because there is an active lock "
-                    "(chat_id={chat_id!r}, user_id={user_id!r})!'", chat_id=chat_id, user_id=user_id
+                    "(chat_id={chat_id!r}, user_id={user_id!r})!", chat_id=chat_id, user_id=user_id
                 ) from None
 
     async def _process_transition(self, magazine: StateMagazine, *,
