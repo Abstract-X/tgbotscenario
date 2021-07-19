@@ -122,7 +122,7 @@ class ScenarioMachine:
                     destination_scene = self._transition_storage.get_destination_scene(source_scene, handler, direction)
                 except errors.transition_storage.DestinationSceneNotFoundError:
                     raise errors.scenario_machine.NextTransitionNotFoundError(
-                        "failed to execute next transition because destination scene not found!"
+                        "failed to execute next transition because destination scene not found! "
                         "(chat_id={chat_id!r}, user_id={user_id!r}, source_scene={source_scene!r}, "
                         "handler={handler!r}, direction={direction!r})!",
                         chat_id=chat_id, user_id=user_id, source_scene=source_scene,
@@ -146,7 +146,7 @@ class ScenarioMachine:
                 source_scene = self._scene_mapping.get(magazine.current)
                 if magazine.previous is None:
                     raise errors.scenario_machine.BackTransitionNotFoundError(
-                        "failed to execute back transition because magazine doesn't have a previous scene"
+                        "failed to execute back transition because magazine doesn't have a previous scene "
                         "(chat_id={chat_id!r}, user_id={user_id!r}, source_scene={source_scene!r})!",
                         chat_id=chat_id, user_id=user_id, source_scene=source_scene
                     )
