@@ -167,7 +167,9 @@ class ScenarioMachine:
 
         await source_scene.process_exit(*scene_args)
         await destination_scene.process_enter(*scene_args)
-        await self._save_state_with_magazine(destination_scene.name, magazine, chat_id=chat_id, user_id=user_id)
+
+        if destination_scene is not source_scene:
+            await self._save_state_with_magazine(destination_scene.name, magazine, chat_id=chat_id, user_id=user_id)
 
     async def _save_state_with_magazine(self, state: str, magazine: StateMagazine, *,
                                         chat_id: int, user_id: int) -> None:

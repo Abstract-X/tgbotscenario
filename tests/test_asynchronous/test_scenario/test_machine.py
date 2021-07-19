@@ -490,6 +490,32 @@ class TestScenarioMachineExecuteNextTransition:
         assert current_scene is foo_scene_mock
         assert current_state == "FooScene"
 
+    @pytest.mark.asyncio
+    async def test_same_source_and_destination_scenes(self, chat_id, user_id, telegram_event_stub,
+                                                      handler, scene_data_stub):
+
+        class InitialScene(BaseScene):
+            pass
+
+        initial_scene_mock = AsyncMock(InitialScene)
+        initial_scene_mock.name = "InitialScene"
+        storage = MemoryStateStorage()
+        storage_mock = AsyncMock(storage)
+        storage_mock.load.side_effect = storage.load
+        storage_mock.save.side_effect = storage.save
+        machine = ScenarioMachine(initial_scene_mock, storage_mock)
+        machine.add_transition(initial_scene_mock, initial_scene_mock, handler)
+        await machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
+                                              scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
+        current_scene = await machine.get_current_scene(chat_id=chat_id, user_id=user_id)
+        current_state = await machine.get_current_state(chat_id=chat_id, user_id=user_id)
+
+        storage_mock.save.assert_not_awaited()
+        initial_scene_mock.process_exit.assert_awaited_once_with(telegram_event_stub, scene_data_stub)
+        initial_scene_mock.process_enter.assert_awaited_once_with(telegram_event_stub, scene_data_stub)
+        assert current_scene is initial_scene_mock
+        assert current_state == "InitialScene"
+
 
 class TestScenarioMachineExecuteBackTransition:
 
