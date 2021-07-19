@@ -1,4 +1,4 @@
-from typing import Iterable, Set
+from typing import Iterable, Set, Union
 
 from tgbotscenario.types import BaseSceneUnion
 from tgbotscenario.common.scenario.scene import BaseScene
@@ -26,6 +26,11 @@ class BaseScenario:
 
         return item in self._scenes
 
-    def select(self, *, exclude: Iterable[BaseSceneUnion] = ()) -> Set[BaseSceneUnion]:
+    def select(self, *, exclude: Union[BaseSceneUnion, Iterable[BaseSceneUnion]] = ()) -> Set[BaseSceneUnion]:
 
-        return {i for i in self._scenes if i not in exclude}
+        if not isinstance(exclude, Iterable):
+            exclude = (exclude,)
+
+        scenes = {i for i in self._scenes if i not in exclude}
+
+        return scenes

@@ -49,4 +49,5 @@ class TestBaseScenarioSelect:
 
         scenario = Scenario()
 
+        assert scenario.select(exclude=initial_scene) == {foo_scene}
         assert scenario.select(exclude=(initial_scene,)) == {foo_scene}
