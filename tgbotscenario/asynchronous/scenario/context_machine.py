@@ -16,11 +16,11 @@ class ContextData:
 
 class ScenarioMachineContext:
 
-    def __init__(self, machine: ScenarioMachine, scene_data, context_data: ContextData):
+    def __init__(self, machine: ScenarioMachine, context_data: ContextData, scene_data: Any = None):
 
         self._machine = machine
-        self._scene_data = scene_data
         self._context_data = context_data
+        self._scene_data = scene_data
 
     async def move_to_next_scene(self, direction: Optional[str] = None) -> None:
 
