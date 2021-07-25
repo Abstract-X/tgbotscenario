@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, List
 
-from tgbotscenario.asynchronous.states.storages.base import AbstractStateStorage
+from tgbotscenario.synchronous.states.storages.base import AbstractStateStorage
 
 if TYPE_CHECKING:
     try:
