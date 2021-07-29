@@ -6,7 +6,7 @@ import time
 import pytest
 
 from tgbotscenario.synchronous.scenario.machine import ScenarioMachine
-from tgbotscenario.synchronous.scenario.context_machine import ScenarioMachineContext, ContextData
+from tgbotscenario.synchronous.scenario.context_machine import ContextMachine, ContextData
 from tgbotscenario.synchronous.scenario.scene import BaseScene
 from tgbotscenario.synchronous.states.storages.memory import MemoryStateStorage
 from tgbotscenario import errors
@@ -37,7 +37,7 @@ def context_data(chat_id, user_id, handler, telegram_event_stub):
     event_context.reset(event_token)
 
 
-class TestScenarioMachineContextMoveToNextScene:
+class TestContextMachineMoveToNextScene:
 
     def test(self, chat_id, user_id, context_data, telegram_event_stub, scene_data_stub, handler):
 
@@ -52,7 +52,7 @@ class TestScenarioMachineContextMoveToNextScene:
         foo_scene_mock.name = "FooScene"
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
         machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
-        context_machine = ScenarioMachineContext(machine, context_data, scene_data_stub)
+        context_machine = ContextMachine(machine, context_data, scene_data_stub)
         context_machine.move_to_next_scene()
         current_scene = machine.get_current_scene(chat_id=chat_id, user_id=user_id)
         current_state = machine.get_current_state(chat_id=chat_id, user_id=user_id)
@@ -69,7 +69,7 @@ class TestScenarioMachineContextMoveToNextScene:
 
         initial_scene = InitialScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        context_machine = ScenarioMachineContext(machine, context_data, scene_data_stub)
+        context_machine = ContextMachine(machine, context_data, scene_data_stub)
 
         with pytest.raises(errors.scenario_machine.NextTransitionNotFoundError):
             context_machine.move_to_next_scene()
@@ -95,7 +95,7 @@ class TestScenarioMachineContextMoveToNextScene:
 
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
         machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
-        context_machine = ScenarioMachineContext(machine, context_data, scene_data_stub)
+        context_machine = ContextMachine(machine, context_data, scene_data_stub)
         thread = Thread(target=machine.execute_next_transition, kwargs={
             "chat_id": chat_id,
             "user_id": user_id,
@@ -136,7 +136,7 @@ class TestScenarioMachineContextMoveToNextScene:
         foo_scene_mock.process_enter.side_effect = fake_process
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage(), suppress_lock_error=True)
         machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
-        context_machine = ScenarioMachineContext(machine, context_data, scene_data_stub)
+        context_machine = ContextMachine(machine, context_data, scene_data_stub)
         thread = Thread(target=machine.execute_next_transition, kwargs={
             "chat_id": chat_id,
             "user_id": user_id,
@@ -155,7 +155,7 @@ class TestScenarioMachineContextMoveToNextScene:
         assert current_state == "FooScene"
 
 
-class TestScenarioMachineContextMoveToPreviousScene:
+class TestContextMachineMoveToPreviousScene:
 
     def test(self, chat_id, user_id, context_data, telegram_event_stub, handler, scene_data_stub):
 
@@ -170,7 +170,7 @@ class TestScenarioMachineContextMoveToPreviousScene:
         foo_scene_mock = MagicMock(FooScene)
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
         machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
-        context_machine = ScenarioMachineContext(machine, context_data, scene_data_stub)
+        context_machine = ContextMachine(machine, context_data, scene_data_stub)
         machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
                                         scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         context_machine.move_to_previous_scene()
@@ -189,7 +189,7 @@ class TestScenarioMachineContextMoveToPreviousScene:
 
         initial_scene = InitialScene()
         machine = ScenarioMachine(initial_scene, MemoryStateStorage())
-        context_machine = ScenarioMachineContext(machine, context_data, scene_data_stub)
+        context_machine = ContextMachine(machine, context_data, scene_data_stub)
 
         with pytest.raises(errors.scenario_machine.BackTransitionNotFoundError):
             context_machine.move_to_previous_scene()
@@ -215,7 +215,7 @@ class TestScenarioMachineContextMoveToPreviousScene:
 
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
         machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
-        context_machine = ScenarioMachineContext(machine, context_data, scene_data_stub)
+        context_machine = ContextMachine(machine, context_data, scene_data_stub)
         machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
                                         scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         thread = Thread(target=machine.execute_back_transition, kwargs={
@@ -258,7 +258,7 @@ class TestScenarioMachineContextMoveToPreviousScene:
         foo_scene_mock.process_enter.side_effect = fake_process
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage(), suppress_lock_error=True)
         machine.add_transition(initial_scene_mock, foo_scene_mock, handler)
-        context_machine = ScenarioMachineContext(machine, context_data, scene_data_stub)
+        context_machine = ContextMachine(machine, context_data, scene_data_stub)
         machine.execute_next_transition(chat_id=chat_id, user_id=user_id,
                                         scene_args=(telegram_event_stub, scene_data_stub), handler=handler)
         thread = Thread(target=machine.execute_back_transition, kwargs={
@@ -278,7 +278,7 @@ class TestScenarioMachineContextMoveToPreviousScene:
         assert current_state == "InitialScene"
 
 
-class TestScenarioMachineContextRefreshScene:
+class TestContextMachineRefreshScene:
 
     def test(self, chat_id, user_id, telegram_event_stub, context_data, scene_data_stub):
 
@@ -288,7 +288,7 @@ class TestScenarioMachineContextRefreshScene:
         initial_scene_mock = MagicMock(InitialScene)
         initial_scene_mock.name = "InitialScene"
         machine = ScenarioMachine(initial_scene_mock, MemoryStateStorage())
-        context_machine = ScenarioMachineContext(machine, context_data, scene_data_stub)
+        context_machine = ContextMachine(machine, context_data, scene_data_stub)
         context_machine.refresh_scene()
         current_scene = machine.get_current_scene(chat_id=chat_id, user_id=user_id)
         current_state = machine.get_current_state(chat_id=chat_id, user_id=user_id)

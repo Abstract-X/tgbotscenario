@@ -1,20 +1,10 @@
-from typing import Optional, Callable, Any
-from dataclasses import dataclass
-from contextvars import ContextVar
+from typing import Optional, Any
 
 from tgbotscenario.asynchronous.scenario.machine import ScenarioMachine
+from tgbotscenario.common.scenario.context_data import ContextData
 
 
-@dataclass
-class ContextData:
-
-    chat_id: ContextVar[int]
-    user_id: ContextVar[int]
-    handler: ContextVar[Callable]
-    event: ContextVar[Any]
-
-
-class ScenarioMachineContext:
+class ContextMachine:
 
     def __init__(self, machine: ScenarioMachine, context_data: ContextData, scene_data: Any = None):
 

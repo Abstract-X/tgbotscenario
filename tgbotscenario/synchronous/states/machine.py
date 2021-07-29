@@ -1,20 +1,14 @@
-from typing import Optional
-
 from tgbotscenario.synchronous.states.storages.base import AbstractStateStorage
 from tgbotscenario.common.states.magazine import StateMagazine
+from tgbotscenario.common.states.machine import BaseStateMachine
 
 
-class StateMachine:
+class StateMachine(BaseStateMachine):
 
     def __init__(self, initial_state: str, state_storage: AbstractStateStorage):
 
-        self._initial_state = initial_state
+        super().__init__(initial_state=initial_state)
         self._state_storage = state_storage
-
-    @property
-    def initial_state(self) -> Optional[str]:
-
-        return self._initial_state
 
     def get_current_state(self, *, chat_id: int, user_id: int) -> str:
 
