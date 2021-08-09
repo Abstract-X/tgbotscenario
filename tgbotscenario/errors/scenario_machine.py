@@ -12,14 +12,6 @@ class ScenarioMachineError(BaseError):
 
 
 @dataclass
-class MigrationToSceneError(ScenarioMachineError):
-
-    chat_id: int
-    user_id: int
-    scene: BaseSceneUnion
-
-
-@dataclass
 class TransitionNotFoundError(ScenarioMachineError):
 
     pass
