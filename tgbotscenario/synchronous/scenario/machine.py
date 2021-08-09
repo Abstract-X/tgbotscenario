@@ -1,4 +1,4 @@
-from typing import Optional, Callable, Set, Tuple, Any
+from typing import Optional, Callable, Set
 
 from tgbotscenario.synchronous.scenario.scene import BaseScene
 from tgbotscenario.synchronous.scenario.locks.storages.base import AbstractLockStorage
@@ -96,22 +96,19 @@ class ScenarioMachine:
 
         return destination_scene
 
-    def migrate_to_scene(self, scene: BaseScene, *, chat_id: int,
-                         user_id: int, scene_args: Tuple[Any, Any]) -> None:
+    def migrate_to_scene(self, scene: BaseScene, event, *, chat_id: int, user_id: int) -> None:
 
-        try:
-            with self._lock_storage.acquire(chat_id=chat_id, user_id=user_id):
-                magazine = self._state_machine.load_magazine(chat_id=chat_id, user_id=user_id)
-                scene.process_enter(*scene_args)
-                self._save_state_with_magazine(scene.name, magazine, chat_id=chat_id, user_id=user_id)
-        except errors.lock_storage.TransitionLockExistsError:
-            raise errors.scenario_machine.MigrationToSceneError(
-                "there was an error migrating to the scene {scene!r} because a transition lock "
-                "is active (chat_id={chat_id!r}, user_id={user_id!r})!",
-                chat_id=chat_id, user_id=user_id, scene=scene
-            ) from None
+        magazine = self._state_machine.load_magazine(chat_id=chat_id, user_id=user_id)
+        scene.process_enter(event)
+        magazine.set(scene.name)
+        self._state_machine.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
 
-    def execute_next_transition(self, *, chat_id: int, user_id: int, scene_args: Tuple[Any, Any],
+    def refresh_current_scene(self, event, *, chat_id: int, user_id: int) -> None:
+
+        scene = self.get_current_scene(chat_id=chat_id, user_id=user_id)
+        scene.process_enter(event)
+
+    def execute_next_transition(self, event, *, chat_id: int, user_id: int,
                                 handler: Callable, direction: Optional[str] = None) -> None:
 
         try:
@@ -129,7 +126,7 @@ class ScenarioMachine:
                         handler=handler, direction=direction,
                     ) from None
 
-                self._process_transition(magazine, chat_id=chat_id, user_id=user_id, scene_args=scene_args,
+                self._process_transition(event, magazine, chat_id=chat_id, user_id=user_id,
                                          source_scene=source_scene, destination_scene=destination_scene)
         except errors.lock_storage.TransitionLockExistsError:
             if not self._suppress_lock_error:
@@ -138,7 +135,7 @@ class ScenarioMachine:
                     "(chat_id={chat_id!r}, user_id={user_id!r})!", chat_id=chat_id, user_id=user_id
                 ) from None
 
-    def execute_back_transition(self, *, chat_id: int, user_id: int, scene_args: Tuple[Any, Any]) -> None:
+    def execute_back_transition(self, event, *, chat_id: int, user_id: int) -> None:
 
         try:
             with self._lock_storage.acquire(chat_id=chat_id, user_id=user_id):
@@ -152,7 +149,7 @@ class ScenarioMachine:
                     )
                 destination_scene = self._scene_mapping.get(magazine.previous)
 
-                self._process_transition(magazine, chat_id=chat_id, user_id=user_id, scene_args=scene_args,
+                self._process_transition(event, magazine, chat_id=chat_id, user_id=user_id,
                                          source_scene=source_scene, destination_scene=destination_scene)
         except errors.lock_storage.TransitionLockExistsError:
             if not self._suppress_lock_error:
@@ -161,17 +158,12 @@ class ScenarioMachine:
                     "(chat_id={chat_id!r}, user_id={user_id!r})!", chat_id=chat_id, user_id=user_id
                 ) from None
 
-    def _process_transition(self, magazine: StateMagazine, *, chat_id: int, user_id: int, scene_args: Tuple[Any, Any],
+    def _process_transition(self, event, magazine: StateMagazine, *, chat_id: int, user_id: int,
                             source_scene: BaseScene, destination_scene: BaseScene) -> None:
 
-        source_scene.process_exit(*scene_args)
-        destination_scene.process_enter(*scene_args)
+        source_scene.process_exit(event)
+        destination_scene.process_enter(event)
 
         if destination_scene is not source_scene:
-            self._save_state_with_magazine(destination_scene.name, magazine, chat_id=chat_id, user_id=user_id)
-
-    def _save_state_with_magazine(self, state: str, magazine: StateMagazine, *,
-                                  chat_id: int, user_id: int) -> None:
-
-        magazine.set(state)
-        self._state_machine.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
+            magazine.set(destination_scene.name)
+            self._state_machine.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
