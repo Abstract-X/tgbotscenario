@@ -1,11 +1,8 @@
-from typing import Callable, Dict, Union, Optional
+from typing import Callable, Dict, Optional, Any
 
-from tgbotscenario.common.scenario.scene_set import SceneSet
-from tgbotscenario.asynchronous.scenario.scene import BaseScene as AsyncBaseScene
-from tgbotscenario.synchronous.scenario.scene import BaseScene as SyncBaseScene
+from tgbotscenario.common.scenes.scene import BaseScene
 
 
-BaseSceneUnion = Union[AsyncBaseScene, SyncBaseScene]
+TelegramEvent = Any
 
-TransitionDict = Dict[Union[BaseSceneUnion, SceneSet], Dict[Callable, Union[BaseSceneUnion, Dict[str, BaseSceneUnion]]]]
-StoredTransitionDict = Dict[BaseSceneUnion, Dict[Callable, Dict[Optional[str], BaseSceneUnion]]]
+TransitionSchemeDict = Dict[BaseScene, Dict[Callable, Dict[Optional[str], BaseScene]]]

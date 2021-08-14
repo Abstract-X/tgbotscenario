@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from tgbotscenario.errors.base import BaseError
-from tgbotscenario.types import BaseSceneUnion
+from tgbotscenario.common.scenes.scene import BaseScene
 
 
 @dataclass
@@ -14,7 +14,7 @@ class SceneMappingError(BaseError):
 class SceneNameBusyError(SceneMappingError):
 
     name: str
-    existing_scene: BaseSceneUnion
+    existing_scene: BaseScene
 
 
 @dataclass

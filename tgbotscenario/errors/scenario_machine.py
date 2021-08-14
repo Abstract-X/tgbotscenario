@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, Callable
 
 from tgbotscenario.errors.base import BaseError
-from tgbotscenario.types import BaseSceneUnion
+from tgbotscenario.common.scenes.scene import BaseScene
 
 
 @dataclass
@@ -22,7 +22,7 @@ class NextTransitionNotFoundError(TransitionNotFoundError):
 
     chat_id: int
     user_id: int
-    source_scene: BaseSceneUnion
+    source_scene: BaseScene
     handler: Callable
     direction: Optional[str]
 
@@ -32,7 +32,7 @@ class BackTransitionNotFoundError(TransitionNotFoundError):
 
     chat_id: int
     user_id: int
-    source_scene: BaseSceneUnion
+    source_scene: BaseScene
 
 
 @dataclass
@@ -40,11 +40,3 @@ class TransitionLockedError(ScenarioMachineError):
 
     chat_id: int
     user_id: int
-
-
-@dataclass
-class CurrentSceneNotFoundError(ScenarioMachineError):
-
-    chat_id: int
-    user_id: int
-    state: str
