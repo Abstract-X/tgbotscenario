@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from tgbotscenario.asynchronous.machines.scenario import ScenarioMachine
-from tgbotscenario.asynchronous.scenes.scene import BaseScene
+from tgbotscenario.asynchronous.scenes.base import BaseScene
 from tgbotscenario.asynchronous.scenes.storages.memory import MemorySceneStorage
 from tgbotscenario import errors
 import tgbotscenario.errors.scenario_machine

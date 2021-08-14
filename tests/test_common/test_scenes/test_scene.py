@@ -1,4 +1,4 @@
-from tgbotscenario.common.scenes.scene import BaseScene
+from tgbotscenario.common.scenes.base import BaseScene
 
 
 class TestBaseSceneName:

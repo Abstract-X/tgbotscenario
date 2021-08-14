@@ -1,4 +1,4 @@
-from tgbotscenario.asynchronous.scenes.scene import BaseScene
+from tgbotscenario.asynchronous.scenes.base import BaseScene
 
 
 class TestBaseSceneName:

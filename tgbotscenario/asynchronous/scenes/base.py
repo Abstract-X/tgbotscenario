@@ -1,7 +1,7 @@
-from tgbotscenario.common.scenes import scene
+from tgbotscenario.common.scenes import base
 
 
-class BaseScene(scene.BaseScene):
+class BaseScene(base.BaseScene):
 
     async def process_enter(self, event) -> None:
 

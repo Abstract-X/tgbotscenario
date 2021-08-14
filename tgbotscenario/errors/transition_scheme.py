@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, Callable
 
 from tgbotscenario.errors.base import BaseError
-from tgbotscenario.common.scenes.scene import BaseScene
+from tgbotscenario.common.scenes.base import BaseScene
 
 
 @dataclass

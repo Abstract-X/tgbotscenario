@@ -1,7 +1,7 @@
 import pytest
 
 from tgbotscenario.common.transition_scheme import TransitionScheme
-from tgbotscenario.common.scenes.scene import BaseScene
+from tgbotscenario.common.scenes.base import BaseScene
 from tgbotscenario import errors
 import tgbotscenario.errors.transition_scheme
 

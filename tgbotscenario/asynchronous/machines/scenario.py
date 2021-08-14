@@ -1,6 +1,6 @@
 from typing import Optional, Callable, FrozenSet
 
-from tgbotscenario.asynchronous.scenes.scene import BaseScene
+from tgbotscenario.asynchronous.scenes.base import BaseScene
 from tgbotscenario.asynchronous.scenes.storages.base import AbstractSceneStorage
 from tgbotscenario.asynchronous.scenes.manager import SceneManager
 from tgbotscenario.common.scenes.magazine import SceneMagazine

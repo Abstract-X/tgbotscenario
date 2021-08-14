@@ -1,7 +1,7 @@
 import pytest
 
 from tgbotscenario.asynchronous.scenes.manager import SceneManager
-from tgbotscenario.asynchronous.scenes.scene import BaseScene
+from tgbotscenario.asynchronous.scenes.base import BaseScene
 from tgbotscenario.asynchronous.scenes.storages.memory import MemorySceneStorage
 from tgbotscenario.common.scenes.magazine import SceneMagazine
 from tgbotscenario import errors

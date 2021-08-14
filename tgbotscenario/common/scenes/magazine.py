@@ -1,6 +1,6 @@
 from typing import List, Optional, Iterator
 
-from tgbotscenario.common.scenes.scene import BaseScene
+from tgbotscenario.common.scenes.base import BaseScene
 from tgbotscenario import errors
 import tgbotscenario.errors.scene_magazine
 

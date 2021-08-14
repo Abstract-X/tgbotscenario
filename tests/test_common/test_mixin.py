@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from tgbotscenario.common.mixin import ScenarioMixin
-from tgbotscenario.common.scenes.scene import BaseScene
+from tgbotscenario.common.scenes.base import BaseScene
 
 
 class TestScenarioMixinExclude:
