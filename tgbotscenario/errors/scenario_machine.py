@@ -36,7 +36,7 @@ class BackTransitionNotFoundError(TransitionNotFoundError):
 
 
 @dataclass
-class TransitionLockedError(ScenarioMachineError):
+class DoubleTransitionError(ScenarioMachineError):
 
     chat_id: int
     user_id: int

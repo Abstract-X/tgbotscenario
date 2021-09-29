@@ -244,7 +244,7 @@ class TestScenarioMachineExecuteNextTransition:
         )
         await asyncio.sleep(0)  # to start the first task before the second
 
-        with pytest.raises(errors.scenario_machine.TransitionLockedError):
+        with pytest.raises(errors.scenario_machine.DoubleTransitionError):
             await machine.execute_next_transition(event, handler, direction, chat_id=chat_id, user_id=user_id)
         await first_task
 
@@ -343,7 +343,7 @@ class TestScenarioMachineExecuteBackTransition:
         )
         await asyncio.sleep(0)  # to start the first task before the second
 
-        with pytest.raises(errors.scenario_machine.TransitionLockedError):
+        with pytest.raises(errors.scenario_machine.DoubleTransitionError):
             await machine.execute_back_transition(event, chat_id=chat_id, user_id=user_id)
         await first_task
 

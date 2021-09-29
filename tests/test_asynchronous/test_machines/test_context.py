@@ -76,7 +76,7 @@ class TestContextMachineMoveToNextScene:
         )
         await asyncio.sleep(0)  # to start the first task before the second
 
-        with pytest.raises(errors.scenario_machine.TransitionLockedError):
+        with pytest.raises(errors.scenario_machine.DoubleTransitionError):
             await context_machine.move_to_next_scene(direction)
         await first_task
 
@@ -180,7 +180,7 @@ class TestContextMachineMoveToPreviousScene:
         )
         await asyncio.sleep(0)  # to start the first task before the second
 
-        with pytest.raises(errors.scenario_machine.TransitionLockedError):
+        with pytest.raises(errors.scenario_machine.DoubleTransitionError):
             await context_machine.move_to_previous_scene()
         await first_task
 

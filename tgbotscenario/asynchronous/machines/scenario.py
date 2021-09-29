@@ -85,8 +85,8 @@ class ScenarioMachine:
                 await self._process_transition(event, magazine, source_scene, destination_scene,
                                                chat_id=chat_id, user_id=user_id)
         except errors.lock_keeper.TransitionLockExistsError:
-            raise errors.scenario_machine.TransitionLockedError(
-                "failed to execute next transition because there is an active lock "
+            raise errors.scenario_machine.DoubleTransitionError(
+                "unable to execute transition while another transition is in progress "
                 "(chat_id={chat_id!r}, user_id={user_id!r})!",
                 chat_id=chat_id, user_id=user_id
             ) from None
@@ -109,8 +109,8 @@ class ScenarioMachine:
                 await self._process_transition(event, magazine, source_scene, destination_scene,
                                                chat_id=chat_id, user_id=user_id)
         except errors.lock_keeper.TransitionLockExistsError:
-            raise errors.scenario_machine.TransitionLockedError(
-                "failed to execute back transition because there is an active lock "
+            raise errors.scenario_machine.DoubleTransitionError(
+                "unable to execute transition while another transition is in progress "
                 "(chat_id={chat_id!r}, user_id={user_id!r})!",
                 chat_id=chat_id, user_id=user_id
             ) from None
