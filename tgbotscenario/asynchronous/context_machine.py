@@ -1,21 +1,21 @@
 from typing import Optional, Tuple
 
-from tgbotscenario.asynchronous.machines.scenario import ScenarioMachine
+from tgbotscenario.asynchronous.machine import Machine
 from tgbotscenario.common.context_data import ContextData
 from tgbotscenario.types import TelegramEvent
 
 
 class ContextMachine:
 
-    def __init__(self, machine: ScenarioMachine, data: ContextData):
+    def __init__(self, machine: Machine, data: ContextData):
 
         self._machine = machine
         self._data = data
 
     async def move_to_next_scene(self, direction: Optional[str] = None) -> None:
 
-        handler = self._data.handler.get()
         event, chat_id, user_id = self._get_required_data()
+        handler = self._data.handler.get()
         await self._machine.execute_next_transition(event, handler, direction, chat_id=chat_id, user_id=user_id)
 
     async def move_to_previous_scene(self) -> None:

@@ -1,21 +1,21 @@
-from typing import Set, FrozenSet
+from typing import Set
 
 from tgbotscenario.asynchronous.scenes.storages.base import AbstractSceneStorage
 from tgbotscenario.asynchronous.scenes.base import BaseScene
-from tgbotscenario.common.scenes.magazine import SceneMagazine
-from tgbotscenario.common.scenes.mapping import SceneMapping
+from tgbotscenario.common.mapping import Mapping
+from tgbotscenario.common.magazine import Magazine
 from tgbotscenario import errors
-import tgbotscenario.errors.scene_mapping
 import tgbotscenario.errors.scene_manager
+import tgbotscenario.errors.mapping
 
 
 class SceneManager:
 
     def __init__(self, initial_scene: BaseScene, storage: AbstractSceneStorage):
 
-        self._mapping = SceneMapping()
-        self._scenes: Set[BaseScene] = set()
+        self._mapping = Mapping()
         self._storage = storage
+        self._scenes: Set[BaseScene] = set()
         self._initial_scene = initial_scene
         self.add_scene(initial_scene)
 
@@ -25,33 +25,35 @@ class SceneManager:
         return self._initial_scene
 
     @property
-    def scenes(self) -> FrozenSet[BaseScene]:
+    def scenes(self) -> Set[BaseScene]:
 
-        return frozenset(self._scenes)
+        return self._scenes.copy()
 
     def add_scene(self, scene: BaseScene) -> None:
 
-        self._mapping.add(scene)
+        self._mapping.add(key=scene.name, value=scene)
         self._scenes.add(scene)
 
-    async def load_magazine(self, *, chat_id: int, user_id: int) -> SceneMagazine:
+    async def load_magazine(self, *, chat_id: int, user_id: int) -> Magazine:
 
-        raw_scenes = await self._storage.load(chat_id=chat_id, user_id=user_id)
-        try:
-            scenes = [self._mapping[name] for name in raw_scenes]
-        except errors.scene_mapping.SceneNameNotFoundError as error:
-            raise errors.scene_manager.UnknownSceneError(
-                "failed to load magazine (chat_id={chat_id!r}, user_id={user_id!r}) because "
-                "the storage contains an unknown scene name {name!r}!",
-                chat_id=chat_id, user_id=user_id, name=error.name
-            ) from None
-
-        if not scenes:
+        raw_scenes = await self._storage.load_scenes(chat_id=chat_id, user_id=user_id)
+        if raw_scenes:
+            try:
+                scenes = [self._mapping.get(i) for i in raw_scenes]
+            except errors.scene_mapping.KeyNotFoundError as error:
+                raise errors.scene_manager.UnknownSceneError(
+                    "failed to load magazine (chat_id={chat_id!r}, user_id={user_id!r}) because "
+                    "the storage contains an unknown scene {scene!r}!",
+                    chat_id=chat_id, user_id=user_id, scene=error.key
+                ) from None
+        else:
             scenes = [self._initial_scene]
 
-        return SceneMagazine(scenes)
+        magazine = Magazine(scenes)
 
-    async def save_magazine(self, magazine: SceneMagazine, *, chat_id: int, user_id: int) -> None:
+        return magazine
+
+    async def save_magazine(self, magazine: Magazine, *, chat_id: int, user_id: int) -> None:
 
         raw_scenes = [scene.name for scene in magazine]
-        await self._storage.save(raw_scenes, chat_id=chat_id, user_id=user_id)
+        await self._storage.save_scenes(raw_scenes, chat_id=chat_id, user_id=user_id)

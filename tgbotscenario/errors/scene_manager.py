@@ -10,13 +10,8 @@ class SceneManagerError(BaseError):
 
 
 @dataclass
-class MagazineLoadingError(SceneManagerError):
+class UnknownSceneError(SceneManagerError):
 
     chat_id: int
     user_id: int
-
-
-@dataclass
-class UnknownSceneError(MagazineLoadingError):
-
-    name: str
+    scene: str

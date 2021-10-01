@@ -1,6 +1,6 @@
 from typing import Optional, Callable
 
-from tgbotscenario.common.scenes.base import BaseScene
+from tgbotscenario.common.scene import BaseScene
 from tgbotscenario.types import TransitionSchemeDict
 from tgbotscenario import errors
 import tgbotscenario.errors.transition_scheme

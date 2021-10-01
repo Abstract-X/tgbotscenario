@@ -2,17 +2,17 @@ from dataclasses import dataclass
 from typing import Optional, Callable
 
 from tgbotscenario.errors.base import BaseError
-from tgbotscenario.common.scenes.base import BaseScene
+from tgbotscenario.common.scene import BaseScene
 
 
 @dataclass
-class ScenarioMachineError(BaseError):
+class MachineError(BaseError):
 
     pass
 
 
 @dataclass
-class TransitionNotFoundError(ScenarioMachineError):
+class TransitionNotFoundError(MachineError):
 
     pass
 
@@ -36,7 +36,13 @@ class BackTransitionNotFoundError(TransitionNotFoundError):
 
 
 @dataclass
-class DoubleTransitionError(ScenarioMachineError):
+class DoubleTransitionError(MachineError):
 
     chat_id: int
     user_id: int
+
+
+@dataclass
+class DuplicateSceneNameError(MachineError):
+
+    name: str

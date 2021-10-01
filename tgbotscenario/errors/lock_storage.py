@@ -4,12 +4,13 @@ from tgbotscenario.errors.base import BaseError
 
 
 @dataclass
-class SceneMagazineError(BaseError):
+class LockStorageError(BaseError):
 
     pass
 
 
 @dataclass
-class SceneMagazineInitializationError(SceneMagazineError):
+class LockExistsError(LockStorageError):
 
-    pass
+    chat_id: int
+    user_id: int
