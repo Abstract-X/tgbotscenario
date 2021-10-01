@@ -7,15 +7,15 @@ from tgbotscenario.types import TelegramEvent
 
 class ContextMachine:
 
-    def __init__(self, machine: Machine, data: ContextData):
+    def __init__(self, machine: Machine, context_data: ContextData):
 
         self._machine = machine
-        self._data = data
+        self._context_data = context_data
 
     async def move_to_next_scene(self, direction: Optional[str] = None, data=None) -> None:
 
         event, chat_id, user_id = self._get_required_data()
-        handler = self._data.handler.get()
+        handler = self._context_data.handler.get()
         await self._machine.execute_next_transition(event, handler, direction, data,
                                                     chat_id=chat_id, user_id=user_id)
 
@@ -31,8 +31,8 @@ class ContextMachine:
 
     def _get_required_data(self) -> Tuple[TelegramEvent, int, int]:
 
-        event = self._data.event.get()
-        chat_id = self._data.chat_id.get()
-        user_id = self._data.user_id.get()
+        event = self._context_data.event.get()
+        chat_id = self._context_data.chat_id.get()
+        user_id = self._context_data.user_id.get()
 
         return event, chat_id, user_id
