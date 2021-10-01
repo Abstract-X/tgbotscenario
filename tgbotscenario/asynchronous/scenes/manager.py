@@ -1,7 +1,7 @@
 from typing import Set
 
 from tgbotscenario.asynchronous.scenes.storages.base import AbstractSceneStorage
-from tgbotscenario.asynchronous.scenes.base import BaseScene
+from tgbotscenario.asynchronous.scenes.scene import BaseScene
 from tgbotscenario.common.mapping import Mapping
 from tgbotscenario.common.magazine import Magazine
 from tgbotscenario import errors

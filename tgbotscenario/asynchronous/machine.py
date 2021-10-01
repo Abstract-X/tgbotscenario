@@ -1,6 +1,6 @@
 from typing import Optional, Callable, Set
 
-from tgbotscenario.asynchronous.scenes.base import BaseScene
+from tgbotscenario.asynchronous.scenes.scene import BaseScene
 from tgbotscenario.asynchronous.scenes.storages.base import AbstractSceneStorage
 from tgbotscenario.asynchronous.scenes.manager import SceneManager
 from tgbotscenario.common.transitions.scheme import TransitionScheme
@@ -51,23 +51,26 @@ class Machine:
 
         return magazine.current
 
-    async def refresh_current_scene(self, event: TelegramEvent, *, chat_id: int, user_id: int) -> None:
+    async def refresh_current_scene(self, event: TelegramEvent, data=None,
+                                    *, chat_id: int, user_id: int) -> None:
 
         scene = await self.get_current_scene(chat_id=chat_id, user_id=user_id)
-        await scene.process_enter(event)
+        await scene.process_enter(event, data)
 
-    async def migrate_to_scene(self, scene: BaseScene, event: TelegramEvent, *, chat_id: int, user_id: int) -> None:
+    async def migrate_to_scene(self, scene: BaseScene, event: TelegramEvent, data=None,
+                               *, chat_id: int, user_id: int) -> None:
 
         magazine = await self._scene_manager.load_magazine(chat_id=chat_id, user_id=user_id)
 
-        await scene.process_enter(event)
+        await scene.process_enter(event, data)
         magazine.set(scene)
 
         await self._scene_manager.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
         self._add_scene(scene)
 
     async def execute_next_transition(self, event: TelegramEvent, handler: Callable,
-                                      direction: Optional[str] = None, *, chat_id: int, user_id: int) -> None:
+                                      direction: Optional[str] = None, data=None,
+                                      *, chat_id: int, user_id: int) -> None:
 
         try:
             with LockContext(self._lock_storage, chat_id=chat_id, user_id=user_id):
@@ -84,7 +87,7 @@ class Machine:
                         handler=handler, direction=direction,
                     ) from None
 
-                await self._process_transition(event, magazine, source_scene, destination_scene,
+                await self._process_transition(event, data, magazine, source_scene, destination_scene,
                                                chat_id=chat_id, user_id=user_id)
         except errors.lock_storage.LockExistsError:
             raise errors.machine.DoubleTransitionError(
@@ -93,7 +96,8 @@ class Machine:
                 chat_id=chat_id, user_id=user_id
             ) from None
 
-    async def execute_back_transition(self, event: TelegramEvent, *, chat_id: int, user_id: int) -> None:
+    async def execute_back_transition(self, event: TelegramEvent, data=None,
+                                      *, chat_id: int, user_id: int) -> None:
 
         try:
             with LockContext(self._lock_storage, chat_id=chat_id, user_id=user_id):
@@ -108,7 +112,7 @@ class Machine:
                         chat_id=chat_id, user_id=user_id, source_scene=source_scene
                     )
 
-                await self._process_transition(event, magazine, source_scene, destination_scene,
+                await self._process_transition(event, data, magazine, source_scene, destination_scene,
                                                chat_id=chat_id, user_id=user_id)
         except errors.lock_storage.LockExistsError:
             raise errors.machine.DoubleTransitionError(
@@ -117,11 +121,11 @@ class Machine:
                 chat_id=chat_id, user_id=user_id
             ) from None
 
-    async def _process_transition(self, event: TelegramEvent, magazine: Magazine, source_scene: BaseScene,
+    async def _process_transition(self, event: TelegramEvent, data, magazine: Magazine, source_scene: BaseScene,
                                   destination_scene: BaseScene, *, chat_id: int, user_id: int) -> None:
 
-        await source_scene.process_exit(event)
-        await destination_scene.process_enter(event)
+        await source_scene.process_exit(event, data)
+        await destination_scene.process_enter(event, data)
 
         magazine.set(destination_scene)
         await self._scene_manager.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
