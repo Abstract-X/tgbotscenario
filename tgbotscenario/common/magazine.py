@@ -1,7 +1,6 @@
 from typing import Any
 
 from tgbotscenario import errors
-import tgbotscenario.errors.magazine
 
 
 class Magazine:
@@ -9,7 +8,7 @@ class Magazine:
     def __init__(self, items: list):
 
         if not items:
-            raise errors.magazine.MagazineInitializationError("magazine can't be empty!")
+            raise errors.MagazineInitializationError("magazine can't be empty!")
 
         self._items = items[:]
 

@@ -5,8 +5,6 @@ from tgbotscenario.asynchronous.scenes.scene import BaseScene
 from tgbotscenario.common.mapping import Mapping
 from tgbotscenario.common.magazine import Magazine
 from tgbotscenario import errors
-import tgbotscenario.errors.scene_manager
-import tgbotscenario.errors.mapping
 
 
 class SceneManager:
@@ -40,8 +38,8 @@ class SceneManager:
         if raw_scenes:
             try:
                 scenes = [self._mapping.get(i) for i in raw_scenes]
-            except errors.scene_mapping.KeyNotFoundError as error:
-                raise errors.scene_manager.UnknownSceneError(
+            except errors.MappingKeyNotFoundError as error:
+                raise errors.UnknownSceneError(
                     "failed to load magazine (chat_id={chat_id!r}, user_id={user_id!r}) because "
                     "the storage contains an unknown scene {scene!r}!",
                     chat_id=chat_id, user_id=user_id, scene=error.key

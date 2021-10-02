@@ -3,7 +3,6 @@ from typing import Optional, Callable
 from tgbotscenario.common.scene import BaseScene
 from tgbotscenario.types import TransitionSchemeDict
 from tgbotscenario import errors
-import tgbotscenario.errors.transition_scheme
 
 
 class TransitionScheme:
@@ -17,13 +16,13 @@ class TransitionScheme:
 
         existing_destination_scene = self._fetch_destination_scene(source_scene, handler, direction)
         if existing_destination_scene is destination_scene:
-            raise errors.transition_scheme.TransitionExistsError(
+            raise errors.TransitionExistsError(
                 "transition (source_scene={source_scene!r}, destination_scene={destination_scene!r}, "
                 "handler={handler!r}, direction={direction!r}) already exists!", source_scene=source_scene,
                 destination_scene=destination_scene, handler=handler, direction=direction
             )
         elif existing_destination_scene is not None:
-            raise errors.transition_scheme.TransitionBusyError(
+            raise errors.TransitionBusyError(
                 "transition (source_scene={source_scene!r}, destination_scene={destination_scene!r}, "
                 "handler={handler!r}, direction={direction!r}) was added earlier for another "
                 "destination scene {existing_destination_scene!r}!", source_scene=source_scene,
@@ -44,7 +43,7 @@ class TransitionScheme:
         try:
             return self._scheme[source_scene][handler][direction]
         except KeyError:
-            raise errors.transition_scheme.DestinationSceneNotFoundError(
+            raise errors.DestinationSceneNotFoundError(
                 "destination scene not found (source_scene={source_scene!r}, handler={handler!r}, "
                 "direction={direction!r})!", source_scene=source_scene, handler=handler, direction=direction
             ) from None

@@ -1,7 +1,6 @@
 from typing import Dict, Any
 
 from tgbotscenario import errors
-import tgbotscenario.errors.mapping
 
 
 class Mapping:
@@ -17,7 +16,7 @@ class Mapping:
         else:
             existing_value = self.get(key)
             if existing_value is not value:
-                raise errors.mapping.KeyBusyError(
+                raise errors.MappingKeyBusyError(
                     "key {key!r} has already been used to add {value!r} value!",
                     key=key, existing_value=existing_value
                 )
@@ -27,5 +26,5 @@ class Mapping:
         try:
             return self._mapping[key]
         except KeyError:
-            raise errors.mapping.KeyNotFoundError("key {key!r} not found!",
-                                                  key=key) from None
+            raise errors.MappingKeyNotFoundError("key {key!r} not found!",
+                                                 key=key) from None

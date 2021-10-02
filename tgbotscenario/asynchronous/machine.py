@@ -9,10 +9,6 @@ from tgbotscenario.common.transitions.locks.context import LockContext
 from tgbotscenario.common.magazine import Magazine
 from tgbotscenario.types import TelegramEvent
 from tgbotscenario import errors
-import tgbotscenario.errors.machine
-import tgbotscenario.errors.transition_scheme
-import tgbotscenario.errors.lock_storage
-import tgbotscenario.errors.mapping
 
 
 class Machine:
@@ -78,8 +74,8 @@ class Machine:
                 source_scene = magazine.current
                 try:
                     destination_scene = self._transition_scheme.get_destination_scene(source_scene, handler, direction)
-                except errors.transition_scheme.DestinationSceneNotFoundError:
-                    raise errors.machine.NextTransitionNotFoundError(
+                except errors.DestinationSceneNotFoundError:
+                    raise errors.NextTransitionNotFoundError(
                         "failed to execute next transition because destination scene not found! "
                         "(chat_id={chat_id!r}, user_id={user_id!r}, source_scene={source_scene!r}, "
                         "handler={handler!r}, direction={direction!r})!",
@@ -89,8 +85,8 @@ class Machine:
 
                 await self._process_transition(event, data, magazine, source_scene, destination_scene,
                                                chat_id=chat_id, user_id=user_id)
-        except errors.lock_storage.LockExistsError:
-            raise errors.machine.DoubleTransitionError(
+        except errors.LockExistsError:
+            raise errors.DoubleTransitionError(
                 "unable to execute next transition while another transition is in progress "
                 "(chat_id={chat_id!r}, user_id={user_id!r})!",
                 chat_id=chat_id, user_id=user_id
@@ -106,7 +102,7 @@ class Machine:
                 destination_scene = magazine.previous
 
                 if destination_scene is None:
-                    raise errors.machine.BackTransitionNotFoundError(
+                    raise errors.BackTransitionNotFoundError(
                         "failed to execute back transition because magazine doesn't have a previous scene "
                         "(chat_id={chat_id!r}, user_id={user_id!r}, source_scene={source_scene!r})!",
                         chat_id=chat_id, user_id=user_id, source_scene=source_scene
@@ -114,8 +110,8 @@ class Machine:
 
                 await self._process_transition(event, data, magazine, source_scene, destination_scene,
                                                chat_id=chat_id, user_id=user_id)
-        except errors.lock_storage.LockExistsError:
-            raise errors.machine.DoubleTransitionError(
+        except errors.LockExistsError:
+            raise errors.DoubleTransitionError(
                 "unable to execute back transition while another transition is in progress "
                 "(chat_id={chat_id!r}, user_id={user_id!r})!",
                 chat_id=chat_id, user_id=user_id
@@ -134,8 +130,8 @@ class Machine:
 
         try:
             self._scene_manager.add_scene(scene)
-        except errors.mapping.KeyBusyError as error:
-            raise errors.machine.DuplicateSceneNameError(
+        except errors.MappingKeyBusyError as error:
+            raise errors.DuplicateSceneNameError(
                 "transition with another scene named {name!r} has already been added earlier!",
                 name=error.key
             )

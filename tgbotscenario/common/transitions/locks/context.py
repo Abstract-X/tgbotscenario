@@ -1,6 +1,5 @@
 from tgbotscenario.common.transitions.locks.storage import LockStorage
 from tgbotscenario import errors
-import tgbotscenario.errors.lock_storage
 
 
 class LockContext:
@@ -16,7 +15,7 @@ class LockContext:
     def __enter__(self):
 
         if self._storage.check_lock(chat_id=self._chat_id, user_id=self._user_id):
-            raise errors.lock_storage.LockExistsError(
+            raise errors.LockExistsError(
                 "lock already exists (chat_id={chat_id!r}, user_id={user_id!r})!",
                 chat_id=self._chat_id, user_id=self._user_id
             )
