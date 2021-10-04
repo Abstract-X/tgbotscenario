@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="tgbotscenario",
-    version="0.4.1",
+    version="0.5.0",
     packages=setuptools.find_packages(exclude=("tests",)),
     url="https://github.com/Abstract-X/tgbotscenario",
     license="MIT",
