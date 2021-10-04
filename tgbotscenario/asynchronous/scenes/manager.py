@@ -35,9 +35,19 @@ class SceneManager:
             raise errors.DuplicateSceneNameError(
                 "scene name {name!r} is not unique!",
                 name=error.key
-            )
+            ) from None
 
         self._scenes.add(scene)
+
+    def get_scene(self, name: str) -> BaseScene:
+
+        try:
+            return self._mapping.get(name)
+        except errors.MappingKeyNotFoundError:
+            raise errors.SceneNotFoundError(
+                "scene named {name!r} was not found!",
+                name=name
+            ) from None
 
     async def load_magazine(self, *, chat_id: int, user_id: int) -> Magazine:
 

@@ -129,3 +129,9 @@ class SceneSetError(BaseError):
     chat_id: int
     user_id: int
     scene: BaseScene
+
+
+@dataclass
+class SceneNotFoundError(BaseError):
+
+    name: str
