@@ -12,19 +12,19 @@ class ContextMachine:
         self._machine = machine
         self._context_data = context_data
 
-    async def move_to_next_scene(self, direction: Optional[str] = None, data=None) -> None:
+    async def execute_next_transition(self, direction: Optional[str] = None, data=None) -> None:
 
         event, chat_id, user_id = self._get_required_data()
         handler = self._context_data.handler.get()
         await self._machine.execute_next_transition(event, handler, direction, data,
                                                     chat_id=chat_id, user_id=user_id)
 
-    async def move_to_previous_scene(self, data=None) -> None:
+    async def execute_back_transition(self, data=None) -> None:
 
         event, chat_id, user_id = self._get_required_data()
         await self._machine.execute_back_transition(event, data, chat_id=chat_id, user_id=user_id)
 
-    async def refresh_scene(self, data=None) -> None:
+    async def refresh_current_scene(self, data=None) -> None:
 
         event, chat_id, user_id = self._get_required_data()
         await self._machine.refresh_current_scene(event, data, chat_id=chat_id, user_id=user_id)
