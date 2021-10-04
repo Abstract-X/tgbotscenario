@@ -29,7 +29,14 @@ class SceneManager:
 
     def add_scene(self, scene: BaseScene) -> None:
 
-        self._mapping.add(key=scene.name, value=scene)
+        try:
+            self._mapping.add(key=scene.name, value=scene)
+        except errors.MappingKeyBusyError as error:
+            raise errors.DuplicateSceneNameError(
+                "scene name {name!r} is not unique!",
+                name=error.key
+            )
+
         self._scenes.add(scene)
 
     async def load_magazine(self, *, chat_id: int, user_id: int) -> Magazine:

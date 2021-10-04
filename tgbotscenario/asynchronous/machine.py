@@ -34,7 +34,13 @@ class Machine:
 
         self._transition_scheme.add_transition(source_scene, destination_scene, handler, direction)
         for scene in (source_scene, destination_scene):
-            self._add_scene(scene)
+            try:
+                self._scene_manager.add_scene(scene)
+            except errors.DuplicateSceneNameError as error:
+                raise errors.DuplicateSceneNameError(
+                    "transition with another scene named {name!r} has already been added earlier!",
+                    name=error.name
+                ) from None
 
     def check_transition(self, source_scene: BaseScene, destination_scene: BaseScene,
                          handler: Callable, direction: Optional[str] = None) -> bool:
@@ -137,13 +143,3 @@ class Machine:
 
         magazine.set(destination_scene)
         await self._scene_manager.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
-
-    def _add_scene(self, scene: BaseScene) -> None:
-
-        try:
-            self._scene_manager.add_scene(scene)
-        except errors.MappingKeyBusyError as error:
-            raise errors.DuplicateSceneNameError(
-                "transition with another scene named {name!r} has already been added earlier!",
-                name=error.key
-            )
