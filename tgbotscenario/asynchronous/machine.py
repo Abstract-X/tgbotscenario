@@ -53,16 +53,28 @@ class Machine:
         scene = await self.get_current_scene(chat_id=chat_id, user_id=user_id)
         await scene.process_enter(event, data)
 
-    async def migrate_to_scene(self, scene: BaseScene, event: TelegramEvent, data=None,
-                               *, chat_id: int, user_id: int) -> None:
+    async def set_current_scene(self, scene: BaseScene, event: TelegramEvent, data=None,
+                                *, chat_id: int, user_id: int) -> None:
 
-        magazine = await self._scene_manager.load_magazine(chat_id=chat_id, user_id=user_id)
+        if scene not in self.scenes:
+            raise errors.SceneSetError(
+                "scene {scene!r} (chat_id={chat_id!r}, user_id={user_id!r}) cannot be set "
+                "because it does not participate in transitions!",
+                chat_id=chat_id, user_id=user_id, scene=scene
+            )
 
-        await scene.process_enter(event, data)
-        magazine.set(scene)
-
-        await self._scene_manager.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
-        self._add_scene(scene)
+        try:
+            with LockContext(self._lock_storage, chat_id=chat_id, user_id=user_id):
+                magazine = await self._scene_manager.load_magazine(chat_id=chat_id, user_id=user_id)
+                await scene.process_enter(event, data)
+                magazine.set(scene)
+                await self._scene_manager.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
+        except errors.LockExistsError:
+            raise errors.SceneSetError(
+                "scene {scene!r} (chat_id={chat_id!r}, user_id={user_id!r}) cannot be set "
+                "because transition in progress!",
+                chat_id=chat_id, user_id=user_id, scene=scene
+            ) from None
 
     async def execute_next_transition(self, event: TelegramEvent, handler: Callable,
                                       direction: Optional[str] = None, data=None,

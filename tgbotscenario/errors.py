@@ -121,3 +121,11 @@ class TransitionBusyError(BaseError):
     handler: Callable
     direction: Optional[str]
     existing_destination_scene: BaseScene
+
+
+@dataclass
+class SceneSetError(BaseError):
+
+    chat_id: int
+    user_id: int
+    scene: BaseScene
