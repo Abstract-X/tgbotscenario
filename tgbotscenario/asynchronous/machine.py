@@ -99,7 +99,7 @@ class Machine:
                                                chat_id=chat_id, user_id=user_id)
         except errors.LockExistsError:
             raise errors.DoubleTransitionError(
-                "unable to execute next transition while another transition is in progress "
+                "next transition cannot be started while another transition in progress "
                 "(chat_id={chat_id!r}, user_id={user_id!r})!",
                 chat_id=chat_id, user_id=user_id
             ) from None
@@ -124,7 +124,7 @@ class Machine:
                                                chat_id=chat_id, user_id=user_id)
         except errors.LockExistsError:
             raise errors.DoubleTransitionError(
-                "unable to execute back transition while another transition is in progress "
+                "back transition cannot be started while another transition in progress!"
                 "(chat_id={chat_id!r}, user_id={user_id!r})!",
                 chat_id=chat_id, user_id=user_id
             ) from None
