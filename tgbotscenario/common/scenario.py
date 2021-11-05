@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Set, Iterable
 
 from tgbotscenario.common.scene import BaseScene
 
@@ -25,3 +26,7 @@ class BaseScenario:
     def __contains__(self, item):
 
         return item in self._scenes
+
+    def select(self, *, exclude: Iterable[BaseScene]) -> Set[BaseScene]:
+
+        return {i for i in self._scenes if i not in exclude}
