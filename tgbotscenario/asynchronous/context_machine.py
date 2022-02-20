@@ -1,38 +1,32 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Any
 
 from tgbotscenario.asynchronous.machine import Machine
-from tgbotscenario.common.context_data import ContextData
-from tgbotscenario.types import TelegramEvent
+from tgbotscenario.common.context import Context
 
 
 class ContextMachine:
 
-    def __init__(self, machine: Machine, context_data: ContextData):
-
+    def __init__(self, machine: Machine, context: Context):
         self._machine = machine
-        self._context_data = context_data
+        self._context = context
 
-    async def execute_next_transition(self, direction: Optional[str] = None, data=None) -> None:
-
+    async def move_to_next_scene(self, direction: Optional[str] = None, data: Any = None) -> None:
         event, chat_id, user_id = self._get_required_data()
-        handler = self._context_data.handler.get()
-        await self._machine.execute_next_transition(event, handler, direction, data,
-                                                    chat_id=chat_id, user_id=user_id)
+        trigger = self._context.trigger.get()
+        await self._machine.move_to_next_scene(event, trigger, direction, data,
+                                               chat_id=chat_id, user_id=user_id)
 
-    async def execute_back_transition(self, data=None) -> None:
-
+    async def move_to_previous_scene(self, data: Any = None) -> None:
         event, chat_id, user_id = self._get_required_data()
-        await self._machine.execute_back_transition(event, data, chat_id=chat_id, user_id=user_id)
+        await self._machine.move_to_previous_scene(event, data, chat_id=chat_id, user_id=user_id)
 
-    async def refresh_current_scene(self, data=None) -> None:
-
+    async def reset_current_scene(self, data: Any = None) -> None:
         event, chat_id, user_id = self._get_required_data()
-        await self._machine.refresh_current_scene(event, data, chat_id=chat_id, user_id=user_id)
+        await self._machine.reset_current_scene(event, data, chat_id=chat_id, user_id=user_id)
 
-    def _get_required_data(self) -> Tuple[TelegramEvent, int, int]:
-
-        event = self._context_data.event.get()
-        chat_id = self._context_data.chat_id.get()
-        user_id = self._context_data.user_id.get()
+    def _get_required_data(self) -> Tuple[Any, int, int]:
+        event = self._context.event.get()
+        chat_id = self._context.chat_id.get()
+        user_id = self._context.user_id.get()
 
         return event, chat_id, user_id

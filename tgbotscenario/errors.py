@@ -1,83 +1,68 @@
 from dataclasses import dataclass
-from typing import Dict, Any, Optional, Callable
+from typing import Any, Optional, Callable
+
+from xcept import Exception_
 
 from tgbotscenario.common.scene import BaseScene
 
 
 @dataclass
-class BaseError(Exception):
-
-    raw_message: str
-
-    def __post_init__(self):
-
-        self._format_kwargs = self._get_format_kwargs()
-
-    def __str__(self):
-
-        return self.raw_message.format(**self._format_kwargs)
-
-    def _get_format_kwargs(self) -> Dict[str, Any]:
-
-        kwargs = vars(self).copy()
-        del kwargs["raw_message"]
-
-        return kwargs
-
-
-@dataclass
-class TransitionNotFoundError(BaseError):
-
+class BaseError(Exception_):
     pass
 
 
 @dataclass
-class NextTransitionNotFoundError(TransitionNotFoundError):
+class TransitionError(BaseError):
+    pass
 
+
+@dataclass
+class TransitionToNextSceneError(TransitionError):
     chat_id: int
     user_id: int
-    source_scene: BaseScene
-    handler: Callable
+    current_scene: BaseScene
+    trigger: Callable
     direction: Optional[str]
 
 
 @dataclass
-class BackTransitionNotFoundError(TransitionNotFoundError):
-
+class TransitionToPreviousSceneError(TransitionError):
     chat_id: int
     user_id: int
-    source_scene: BaseScene
+    current_scene: BaseScene
 
 
 @dataclass
-class DoubleTransitionError(BaseError):
-
+class DoubleTransitionError(TransitionError):
     chat_id: int
     user_id: int
 
 
 @dataclass
 class DuplicateSceneNameError(BaseError):
-
     name: str
 
 
 @dataclass
-class LockExistsError(BaseError):
+class TransitionForRemovingNotFoundError(BaseError):
+    source_scene: BaseScene
+    trigger: Callable
+    direction: Optional[str]
 
+
+@dataclass
+class LockExistsError(BaseError):
     chat_id: int
     user_id: int
 
 
 @dataclass
 class MagazineInitializationError(BaseError):
-
     pass
 
 
 @dataclass
 class UnknownSceneError(BaseError):
-
     chat_id: int
     user_id: int
     scene: str
@@ -85,53 +70,65 @@ class UnknownSceneError(BaseError):
 
 @dataclass
 class MappingKeyBusyError(BaseError):
-
     key: str
+    value: Any
     existing_value: Any
 
 
 @dataclass
-class MappingKeyNotFoundError(BaseError):
+class MappingValueBusyError(BaseError):
+    value: Any
+    key: str
+    existing_key: str
 
+
+@dataclass
+class MappingDataNotFoundError(BaseError):
+    key: str
+    value: Any
+
+
+@dataclass
+class MappingKeyNotFoundError(BaseError):
     key: str
 
 
 @dataclass
-class DestinationSceneNotFoundError(BaseError):
+class MappingValueNotFoundError(BaseError):
+    value: Any
 
+
+@dataclass
+class DestinationSceneNotFoundError(BaseError):
     source_scene: BaseScene
-    handler: Callable
+    trigger: Callable
     direction: Optional[str]
 
 
 @dataclass
 class TransitionExistsError(BaseError):
-
     source_scene: BaseScene
     destination_scene: BaseScene
-    handler: Callable
+    trigger: Callable
     direction: Optional[str]
 
 
 @dataclass
 class TransitionBusyError(BaseError):
-
     source_scene: BaseScene
     destination_scene: BaseScene
-    handler: Callable
+    trigger: Callable
     direction: Optional[str]
     existing_destination_scene: BaseScene
 
 
 @dataclass
-class SceneSetError(BaseError):
-
+class SceneSettingError(BaseError):
+    scene: BaseScene
     chat_id: int
     user_id: int
-    scene: BaseScene
 
 
 @dataclass
 class SceneNotFoundError(BaseError):
-
-    name: str
+    scene: BaseScene

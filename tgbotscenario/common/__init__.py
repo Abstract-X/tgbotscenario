@@ -1,8 +1,8 @@
-from .context_data import ContextData
+from .context import Context
 from .scenario import BaseScenario
 
 
 __all__ = [
-    "ContextData",
+    "Context",
     "BaseScenario"
 ]

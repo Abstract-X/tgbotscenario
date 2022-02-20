@@ -1,6 +1,6 @@
 from .machine import Machine
 from .context_machine import ContextMachine
-from .scenes.scene import BaseScene
+from .scenes.scene import Scene
 from .scenes.storages.base import AbstractSceneStorage
 from .scenes.storages.memory import MemorySceneStorage
 
@@ -8,7 +8,7 @@ from .scenes.storages.memory import MemorySceneStorage
 __all__ = [
     "Machine",
     "ContextMachine",
-    "BaseScene",
+    "Scene",
     "AbstractSceneStorage",
     "MemorySceneStorage"
 ]
