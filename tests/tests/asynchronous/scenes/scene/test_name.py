@@ -1,21 +1,20 @@
-from tgbotscenario.asynchronous import BaseScene
+import pytest
+
+from tgbotscenario.asynchronous import Scene
 
 
-def test_default_name():
-
-    class SomeScene(BaseScene):
-        pass
-
-    scene = SomeScene()
-
-    assert scene.name == "SomeScene"
+class TestScene(Scene):
+    pass
 
 
-def test_passed_name():
+@pytest.mark.parametrize(
+    ("name", "expected_name"),
+    (
+        (None, "TestScene"),
+        ("FooScene", "FooScene")
+    )
+)
+def test_behavior(name, expected_name):
+    scene = TestScene(name)
 
-    class Scene(BaseScene):
-        pass
-
-    scene = Scene("TestScene")
-
-    assert scene.name == "TestScene"
+    assert scene.name == expected_name

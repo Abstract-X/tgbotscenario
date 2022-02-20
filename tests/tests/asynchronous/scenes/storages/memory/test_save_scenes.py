@@ -1,42 +1,51 @@
 import pytest
 
 from tgbotscenario.asynchronous import MemorySceneStorage
-from tests.generators import generate_chat_id
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("chat_id", "user_id"),
     (
-        (generate_chat_id(), generate_chat_id()),  # different
-        (generate_chat_id(),) * 2  # same
+        (-100123456789, 123456789),
+        (123456789, 123456789)
     )
 )
-@pytest.mark.asyncio
-async def test(chat_id, user_id):
-
+@pytest.mark.parametrize(
+    ("scenes",),
+    (
+        (["InitialScene"],),
+        (["InitialScene", "FooScene"],)
+    )
+)
+async def test_behavior(chat_id, user_id, scenes):
     storage = MemorySceneStorage()
 
-    await storage.save_scenes(["InitialScene", "Scene"], chat_id=chat_id, user_id=user_id)
+    await storage.save_scenes(scenes, chat_id=chat_id, user_id=user_id)
 
-    scenes = await storage.load_scenes(chat_id=chat_id, user_id=user_id)
-    assert scenes == ["InitialScene", "Scene"]
+    assert await storage.load_scenes(chat_id=chat_id, user_id=user_id) == scenes
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("chat_id", "user_id"),
     (
-        (generate_chat_id(), generate_chat_id()),  # different
-        (generate_chat_id(),) * 2  # same
+        (-100123456789, 123456789),
+        (123456789, 123456789)
     )
 )
-@pytest.mark.asyncio
-async def test_mutability(chat_id, user_id):
-
+@pytest.mark.parametrize(
+    ("scenes",),
+    (
+        (["InitialScene"],),
+        (["InitialScene", "FooScene"],)
+    )
+)
+async def test_immutability(chat_id, user_id, scenes):
     storage = MemorySceneStorage()
-    source_scenes = ["InitialScene", "Scene"]
+    saving_scenes = scenes.copy()
 
-    await storage.save_scenes(source_scenes, chat_id=chat_id, user_id=user_id)
-    source_scenes.clear()
+    await storage.save_scenes(saving_scenes, chat_id=chat_id, user_id=user_id)
+    saving_scenes.clear()
 
-    scenes = await storage.load_scenes(chat_id=chat_id, user_id=user_id)
-    assert scenes == ["InitialScene", "Scene"]
+    assert await storage.load_scenes(chat_id=chat_id, user_id=user_id) == scenes
